@@ -1,0 +1,125 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>Respiratory System AR</title>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+
+<!-- A-Frame + AR.js -->
+<script src="https://aframe.io/releases/1.4.0/aframe.min.js"></script>
+<script src="https://raw.githack.com/AR-js-org/AR.js/master/aframe/build/aframe-ar.js"></script>
+
+<style>
+body{
+margin:0;
+font-family:Arial, sans-serif;
+background:linear-gradient(135deg,#0a0f2c,#1a0f3d,#3b0f5e,#6b21a8);
+color:white;
+text-align:center;
+}
+header{
+padding:20px;
+font-size:28px;
+font-weight:bold;
+color:#c084fc;
+text-shadow:0 0 10px #a855f7,0 0 20px #6366f1,0 0 40px #3b82f6;
+}
+button{
+margin:10px;
+padding:12px 20px;
+font-size:16px;
+border:none;
+border-radius:10px;
+background:linear-gradient(45deg,#3b82f6,#a855f7);
+color:white;
+cursor:pointer;
+}
+textarea{
+width:90%;
+height:80px;
+border-radius:10px;
+margin-top:15px;
+padding:10px;
+font-size:14px;
+}
+.card{
+background:rgba(255,255,255,0.08);
+backdrop-filter:blur(10px);
+padding:15px;
+border-radius:12px;
+margin:15px;
+}
+.pop{
+position:absolute;
+font-size:22px;
+animation:popAnim 0.8s forwards;
+}
+@keyframes popAnim{
+0%{transform:scale(0);opacity:1;}
+100%{transform:scale(2);opacity:0;}
+}
+</style>
+</head>
+
+<body>
+
+<header>🫁 Respiratory System AR</header>
+
+<div class="card">
+<p>📖 Explanation:</p>
+<p id="text">This is the respiratory system. Air enters your nose or mouth, goes down the trachea, and reaches the lungs. In the lungs, oxygen is transferred to the blood, and carbon dioxide is removed. The lungs work together with the diaphragm to help you breathe.</p>
+<button onclick="speakText(); popEffect(event);">🔊 Listen</button>
+</div>
+
+<!-- AR Scene -->
+<a-scene embedded arjs>
+<a-marker preset="hiro">
+<a-entity gltf-model="https://imagetostl.com/download/ab1c5cd9-4db8-4792-89fd-f50453fabda6/s1/0" scale="0.5 0.5 0.5" position="0 0 0"></a-entity>
+</a-marker>
+<a-entity camera></a-entity>
+</a-scene>
+
+<!-- Reflection Box -->
+<div class="card">
+<p>✍️ Reflection: What did you observe?</p>
+<textarea id="reflection" placeholder="Type your thoughts here..."></textarea>
+<button onclick="submitReflection(); popEffect(event);">✅ Submit Reflection</button>
+<p id="points"></p>
+</div>
+
+<script>
+/* Talking Explanation */
+function speakText(){
+  const text = document.getElementById("text").innerText;
+  const synth = window.speechSynthesis;
+  const utterance = new SpeechSynthesisUtterance(text);
+  synth.speak(utterance);
+}
+
+/* Reflection + Points */
+let points = 0;
+function submitReflection(){
+  const reflection = document.getElementById("reflection").value;
+  if(reflection.length>5){
+    points += 10;
+    document.getElementById("points").innerText="🎉 You earned 10 points! Total: "+points;
+    document.getElementById("reflection").value="";
+  } else {
+    alert("Please write more about your observation!");
+  }
+}
+
+/* Emoji pop on click */
+function popEffect(e){
+const emojis=["✨","⭐","🚀","💫","🧬"];
+const emoji=document.createElement("div");
+emoji.className="pop";
+emoji.innerText=emojis[Math.floor(Math.random()*emojis.length)];
+emoji.style.left=e.pageX+"px";
+emoji.style.top=e.pageY+"px";
+document.body.appendChild(emoji);
+setTimeout(()=>emoji.remove(),800);
+}
+</script>
+
+</body>
+</html>
