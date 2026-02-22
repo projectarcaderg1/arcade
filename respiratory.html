@@ -1,0 +1,141 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>ARCADE Respiratory System</title>
+
+<!-- Google model-viewer (SUPER STABLE AR) -->
+<script type="module" src="https://unpkg.com/@google/model-viewer/dist/model-viewer.min.js"></script>
+
+<style>
+body{
+margin:0;
+font-family:Arial;
+background:linear-gradient(135deg,#0a0f2c,#1a0f3d,#2b0f5e);
+color:white;
+text-align:center;
+}
+
+header{
+padding:20px;
+font-size:26px;
+font-weight:bold;
+color:#c084fc;
+text-shadow:0 0 15px #a855f7,0 0 25px #3b82f6;
+}
+
+model-viewer{
+width:100%;
+height:60vh;
+background:black;
+}
+
+.card{
+margin:15px;
+padding:15px;
+background:rgba(255,255,255,0.1);
+border-radius:12px;
+}
+
+button{
+padding:12px 20px;
+margin-top:10px;
+border:none;
+border-radius:10px;
+background:linear-gradient(45deg,#3b82f6,#a855f7);
+color:white;
+font-size:16px;
+}
+
+textarea{
+width:90%;
+height:80px;
+margin-top:10px;
+border-radius:10px;
+padding:10px;
+font-size:16px;
+}
+
+.pop{
+position:absolute;
+font-size:22px;
+animation:pop 0.8s forwards;
+}
+
+@keyframes pop{
+0%{transform:scale(0);}
+100%{transform:scale(2);opacity:0;}
+}
+</style>
+</head>
+
+<body>
+
+<header>🫁 ARCADE — Active Reality Before Digital Education</header>
+
+<!-- AR MODEL -->
+<model-viewer
+src="ImageToStl.com_respiratory-system.glb"
+ar
+ar-modes="webxr scene-viewer quick-look"
+camera-controls
+auto-rotate
+shadow-intensity="1"
+alt="Respiratory System">
+</model-viewer>
+
+<div class="card">
+<p id="lesson">
+The respiratory system allows humans to breathe.
+Air enters through the nose, travels to the lungs,
+and oxygen moves into the bloodstream while carbon dioxide leaves the body.
+</p>
+
+<button onclick="speakLesson(event)">🔊 Listen</button>
+</div>
+
+<div class="card">
+<h3>Reflection</h3>
+<textarea id="reflection" placeholder="What did you learn?"></textarea>
+<br>
+<button onclick="submitReflection(event)">Submit</button>
+<p id="points"></p>
+</div>
+
+<script>
+let points=0;
+
+function speakLesson(e){
+pop(e);
+const text=document.getElementById("lesson").innerText;
+speechSynthesis.speak(new SpeechSynthesisUtterance(text));
+}
+
+function submitReflection(e){
+pop(e);
+const text=document.getElementById("reflection").value;
+
+if(text.length>5){
+points+=10;
+document.getElementById("points").innerText=
+"🎉 You earned 10 points! Total: "+points;
+document.getElementById("reflection").value="";
+}else{
+alert("Write more before submitting.");
+}
+}
+
+function pop(e){
+const emojis=["✨","🚀","⭐","🧬","💫"];
+const el=document.createElement("div");
+el.className="pop";
+el.innerText=emojis[Math.floor(Math.random()*emojis.length)];
+el.style.left=e.pageX+"px";
+el.style.top=e.pageY+"px";
+document.body.appendChild(el);
+setTimeout(()=>el.remove(),800);
+}
+</script>
+
+</body>
+</html>
