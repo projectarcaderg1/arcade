@@ -1,18 +1,20 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>A.R.C.A.D.E</title>
 
+<!-- A-Frame & MindAR libraries -->
 <script src="https://aframe.io/releases/1.4.2/aframe.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/mind-ar@1.2.2/dist/mindar-image-aframe.prod.js"></script>
 
+<!-- Styles -->
 <style>
 body {margin:0; font-family:Arial; background:linear-gradient(135deg,#0a0f3c,#4b1fa3); color:white; overflow:hidden;}
 h1{text-align:center; font-size:28px; color:#c084fc; text-shadow:0 0 15px #a855f7,0 0 25px #3b82f6; margin:15px 0;}
 #ui{position:fixed; bottom:10px; left:50%; transform:translateX(-50%); width:90%; max-width:400px; background:rgba(0,0,40,0.85); padding:15px; border-radius:15px; text-align:center; box-shadow:0 0 20px #7b5cff;}
-button{padding:10px; margin:5px; border:none; border-radius:10px; background:linear-gradient(45deg,#3b82f6,#a855f7); color:white; font-size:16px;}
-textarea{width:95%; height:70px; border-radius:8px; margin-top:5px;}
+button{padding:10px; margin:5px; border:none; border-radius:10px; background:linear-gradient(45deg,#3b82f6,#a855f7); color:white; font-size:16px; cursor:pointer;}
+textarea{width:95%; height:70px; border-radius:8px; margin-top:5px; resize:none;}
 .emoji{position:fixed; font-size:28px; animation:pop 1s ease forwards;}
 @keyframes pop{0%{transform:scale(0); opacity:1;} 100%{transform:translateY(-120px) scale(1.5); opacity:0;}}
 </style>
@@ -21,6 +23,7 @@ textarea{width:95%; height:70px; border-radius:8px; margin-top:5px;}
 <body>
 <h1>🧬 A.R.C.A.D.E</h1>
 
+<!-- AR Scene -->
 <a-scene mindar-image="imageTargetSrc: targets/respiratory.mind;" 
          color-space="sRGB" 
          renderer="colorManagement:true, physicallyCorrectLights" 
@@ -31,8 +34,9 @@ textarea{width:95%; height:70px; border-radius:8px; margin-top:5px;}
     <a-asset-item id="respModel" src="models/ImageToStl.com_respiratory-system.glb"></a-asset-item>
   </a-assets>
 
+  <!-- AR Model -->
   <a-entity mindar-image-target="targetIndex:0">
-    <a-gltf-model src="#respModel" position="0 0 0" rotation="0 0 0" scale="0.4 0.4 0.4" 
+    <a-gltf-model src="#respModel" position="0 0 0" rotation="0 0 0" scale="0.4 0.4 0.4"
                   animation="property: rotation; to:0 360 0; loop:true; dur:12000">
     </a-gltf-model>
   </a-entity>
@@ -40,19 +44,21 @@ textarea{width:95%; height:70px; border-radius:8px; margin-top:5px;}
   <a-camera position="0 0 0" look-controls="enabled:false"></a-camera>
 </a-scene>
 
+<!-- UI Panel -->
 <div id="ui">
-<div id="points">Points: 0 ⭐</div>
-<button id="listenBtn">🔊 Listen Lesson</button>
-<button id="submitBtn">✅ Submit Reflection</button>
-<p>Reflection:</p>
-<textarea id="reflection" placeholder="What did you learn?"></textarea>
+  <div id="points">Points: 0 ⭐</div>
+  <button id="listenBtn">🔊 Listen Lesson</button>
+  <button id="submitBtn">✅ Submit Reflection</button>
+  <p>Reflection:</p>
+  <textarea id="reflection" placeholder="What did you learn?"></textarea>
 </div>
 
+<!-- Scripts -->
 <script>
 let points = 0;
 let lessonHeard = false;
 
-// Listen button
+// Listen Lesson Button
 document.getElementById("listenBtn").addEventListener("click", (e)=>{
   popEmoji(e);
   const text = "The respiratory system helps the body breathe. Oxygen enters the lungs and carbon dioxide leaves.";
@@ -64,7 +70,7 @@ document.getElementById("listenBtn").addEventListener("click", (e)=>{
   lessonHeard = true;
 });
 
-// Submit reflection button
+// Submit Reflection Button
 document.getElementById("submitBtn").addEventListener("click", (e)=>{
   popEmoji(e);
   const reflection = document.getElementById("reflection").value;
@@ -73,15 +79,13 @@ document.getElementById("submitBtn").addEventListener("click", (e)=>{
   points += 10;
   document.getElementById("points").innerText = "Points: "+points+" ⭐";
 
-  // Confetti / emoji explosion
-  for(let i=0;i<30;i++){
-    popEmoji(e,true);
-  }
+  // Confetti / Emoji Explosion
+  for(let i=0;i<30;i++){ popEmoji(e,true); }
 
   document.getElementById("reflection").value="";
 });
 
-// Emoji pop function
+// Emoji Pop Function
 function popEmoji(e,confetti=false){
   const symbols = confetti ? ["🎉","✨","🧠","⭐","💫","🚀","🌟"] : ["✨","🧬","⭐","💫"];
   const symbol = symbols[Math.floor(Math.random()*symbols.length)];
