@@ -1,18 +1,30 @@
 <!DOCTYPE html>
 <html>
 <head>
+<meta name="viewport" content="width=device-width, initial-scale=1">
 <script src="https://aframe.io/releases/1.4.2/aframe.min.js"></script>
 </head>
 
-<body>
-<a-scene>
-  <a-gltf-model 
-    src="models/respiratory.glb"
-    position="0 1 -3"
-    scale="1 1 1">
+<body style="margin:0">
+
+<a-scene background="color: #000000">
+
+  <!-- LIGHT so model is visible -->
+  <a-light type="ambient" intensity="1"></a-light>
+  <a-light type="directional" position="1 2 1"></a-light>
+
+  <!-- CAMERA -->
+  <a-camera position="0 1.6 3"></a-camera>
+
+  <!-- MODEL -->
+  <a-gltf-model
+      src="models/respiratory.glb"
+      position="0 1 -2"
+      rotation="0 180 0"
+      scale="0.5 0.5 0.5">
   </a-gltf-model>
 
-  <a-sky color="#111"></a-sky>
 </a-scene>
+
 </body>
 </html>
