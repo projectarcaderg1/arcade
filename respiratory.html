@@ -4,78 +4,23 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>A.R.C.A.D.E</title>
 
-<!-- A-Frame + MindAR -->
 <script src="https://aframe.io/releases/1.4.2/aframe.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/mind-ar@1.2.2/dist/mindar-image-aframe.prod.js"></script>
 
 <style>
-body {
-  margin:0;
-  font-family:Arial;
-  background:linear-gradient(135deg,#0a0f3c,#4b1fa3);
-  color:white;
-  overflow:hidden;
-}
-
-/* UI PANEL */
-#ui{
-  position:fixed;
-  bottom:10px;
-  left:50%;
-  transform:translateX(-50%);
-  width:90%;
-  max-width:400px;
-  background:rgba(0,0,40,0.85);
-  padding:15px;
-  border-radius:15px;
-  text-align:center;
-  box-shadow:0 0 20px #7b5cff;
-}
-
-h1{
-  text-align:center;
-  font-size:28px;
-  color:#c084fc;
-  text-shadow:0 0 15px #a855f7,0 0 25px #3b82f6;
-  margin-bottom:10px;
-}
-
-button{
-  padding:10px;
-  margin:5px;
-  border:none;
-  border-radius:10px;
-  background:linear-gradient(45deg,#3b82f6,#a855f7);
-  color:white;
-  font-size:16px;
-}
-
-textarea{
-  width:95%;
-  height:70px;
-  border-radius:8px;
-  margin-top:5px;
-}
-
-/* emoji pop */
-.emoji{
-  position:fixed;
-  font-size:28px;
-  animation:pop 1s ease forwards;
-}
-
-@keyframes pop{
-  0%{transform:scale(0);opacity:1;}
-  100%{transform:translateY(-120px) scale(1.5);opacity:0;}
-}
+body {margin:0;font-family:Arial;background:linear-gradient(135deg,#0a0f3c,#4b1fa3);color:white;overflow:hidden;}
+#ui{position:fixed;bottom:10px;left:50%;transform:translateX(-50%);width:90%;max-width:400px;background:rgba(0,0,40,0.85);padding:15px;border-radius:15px;text-align:center;box-shadow:0 0 20px #7b5cff;}
+h1{text-align:center;font-size:28px;color:#c084fc;text-shadow:0 0 15px #a855f7,0 0 25px #3b82f6;margin-bottom:10px;}
+button{padding:10px;margin:5px;border:none;border-radius:10px;background:linear-gradient(45deg,#3b82f6,#a855f7);color:white;font-size:16px;}
+textarea{width:95%;height:70px;border-radius:8px;margin-top:5px;}
+.emoji{position:fixed;font-size:28px;animation:pop 1s ease forwards;}
+@keyframes pop{0%{transform:scale(0);opacity:1;}100%{transform:translateY(-120px) scale(1.5);opacity:0;}}
 </style>
 </head>
 
 <body>
-
 <h1>🧬 A.R.C.A.D.E</h1>
 
-<!-- AR Scene -->
 <a-scene mindar-image="imageTargetSrc: targets/respiratory.mind;"
          color-space="sRGB"
          renderer="colorManagement:true, physicallyCorrectLights"
@@ -86,84 +31,26 @@ textarea{
     <a-asset-item id="respModel" src="models/ImageToStl.com_respiratory-system.glb"></a-asset-item>
   </a-assets>
 
-  <!-- Image Marker Target -->
   <a-entity mindar-image-target="targetIndex:0">
-    <a-gltf-model
-      src="#respModel"
-      position="0 0 0"
-      rotation="0 0 0"
-      scale="0.4 0.4 0.4"
-      animation="property: rotation; to:0 360 0; loop:true; dur:12000">
-    </a-gltf-model>
+    <a-gltf-model src="#respModel" position="0 0 0" rotation="0 0 0" scale="0.4 0.4 0.4" animation="property: rotation; to:0 360 0; loop:true; dur:12000"></a-gltf-model>
   </a-entity>
 
   <a-camera position="0 0 0" look-controls="enabled:false"></a-camera>
 </a-scene>
 
-<!-- UI Panel -->
 <div id="ui">
 <div id="points">Points: 0 ⭐</div>
-
 <button onclick="playLesson(event)">🔊 Listen Lesson</button>
 <button onclick="submitReflection(event)">✅ Submit Reflection</button>
-
 <p>Reflection:</p>
 <textarea id="reflection" placeholder="What did you learn?"></textarea>
 </div>
 
 <script>
-let points=0;
-let lessonHeard=false;
-
-function playLesson(e){
-  popEmoji(e);
-  const text="The respiratory system helps the body breathe. Oxygen enters the lungs and carbon dioxide leaves.";
-  const speech=new SpeechSynthesisUtterance(text);
-  speech.rate=0.9;
-  speech.pitch=1.1;
-  speech.lang="en-US";
-  speechSynthesis.speak(speech);
-  lessonHeard=true;
-}
-
-function submitReflection(e){
-  popEmoji(e);
-  const reflection=document.getElementById("reflection").value;
-  if(!lessonHeard){
-    alert("Listen to the lesson first!");
-    return;
-  }
-  if(reflection.length<5){
-    alert("Write more before submitting.");
-    return;
-  }
-
-  // Add points and show confetti/emoji pop
-  points+=10;
-  document.getElementById("points").innerText="Points: "+points+" ⭐";
-
-  // Confetti explosion (multiple emojis)
-  for(let i=0;i<30;i++){
-    popEmoji(e,true);
-  }
-
-  // Clear textarea
-  document.getElementById("reflection").value="";
-}
-
-// Small emoji pop per click
-function popEmoji(e,confetti=false){
-  const symbols=confetti ? ["🎉","✨","🧠","⭐","💫","🚀","🌟"] : ["✨","🧬","⭐","💫"];
-  const symbol=symbols[Math.floor(Math.random()*symbols.length)];
-  const el=document.createElement("div");
-  el.className="emoji";
-  el.innerText=symbol;
-  el.style.left=(e.pageX || window.innerWidth/2)+"px";
-  el.style.top=(e.pageY || window.innerHeight/2)+"px";
-  document.body.appendChild(el);
-  setTimeout(()=>el.remove(),1000);
-}
+let points=0; let lessonHeard=false;
+function playLesson(e){popEmoji(e);const text="The respiratory system helps the body breathe. Oxygen enters the lungs and carbon dioxide leaves.";const speech=new SpeechSynthesisUtterance(text);speech.rate=0.9;speech.pitch=1.1;speech.lang="en-US";speechSynthesis.speak(speech);lessonHeard=true;}
+function submitReflection(e){popEmoji(e);const reflection=document.getElementById("reflection").value;if(!lessonHeard){alert("Listen to the lesson first!");return;}if(reflection.length<5){alert("Write more before submitting.");return;}points+=10;document.getElementById("points").innerText="Points: "+points+" ⭐";for(let i=0;i<30;i++){popEmoji(e,true);}document.getElementById("reflection").value="";}
+function popEmoji(e,confetti=false){const symbols=confetti?["🎉","✨","🧠","⭐","💫","🚀","🌟"]:["✨","🧬","⭐","💫"];const symbol=symbols[Math.floor(Math.random()*symbols.length)];const el=document.createElement("div");el.className="emoji";el.innerText=symbol;el.style.left=(e.pageX||window.innerWidth/2)+"px";el.style.top=(e.pageY||window.innerHeight/2)+"px";document.body.appendChild(el);setTimeout(()=>el.remove(),1000);}
 </script>
-
 </body>
 </html>
