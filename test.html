@@ -1,20 +1,25 @@
 <!DOCTYPE html>
 <html>
 <head>
-<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
 <script src="https://aframe.io/releases/1.4.2/aframe.min.js"></script>
+
+<style>
+body { margin:0; }
+</style>
 </head>
 
-<body style="margin:0">
+<body>
 
-<a-scene background="color: #000000">
+<a-scene background="color: #050b1f">
 
-  <!-- LIGHT so model is visible -->
-  <a-light type="ambient" intensity="1"></a-light>
-  <a-light type="directional" position="1 2 1"></a-light>
+  <!-- LIGHTS (VERY IMPORTANT) -->
+  <a-light type="ambient" intensity="1.5"></a-light>
+  <a-light type="directional" position="1 2 1" intensity="2"></a-light>
 
   <!-- CAMERA -->
-  <a-camera position="0 1.6 3"></a-camera>
+  <a-entity camera position="0 1.6 3"></a-entity>
 
   <!-- MODEL -->
   <a-gltf-model
