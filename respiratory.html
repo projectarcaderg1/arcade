@@ -1,140 +1,130 @@
 <!DOCTYPE html>
 <html>
 <head>
-<meta name="viewport" content="width=device-width, initial-scale=1">
-<title>ARCADE Respiratory System</title>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-<!-- Google model-viewer (SUPER STABLE AR) -->
-<script type="module" src="https://unpkg.com/@google/model-viewer/dist/model-viewer.min.js"></script>
+<title>A.R.C.A.D.E - Respiratory</title>
+
+<link rel="stylesheet" href="css/style.css">
 
 <style>
-body{
-margin:0;
-font-family:Arial;
-background:linear-gradient(135deg,#0a0f2c,#1a0f3d,#2b0f5e);
-color:white;
-text-align:center;
-}
-
-header{
-padding:20px;
-font-size:26px;
-font-weight:bold;
-color:#c084fc;
-text-shadow:0 0 15px #a855f7,0 0 25px #3b82f6;
-}
-
-model-viewer{
-width:100%;
-height:60vh;
-background:black;
-}
-
-.card{
-margin:15px;
-padding:15px;
-background:rgba(255,255,255,0.1);
-border-radius:12px;
+.lesson-box{
+  margin:20px;
+  padding:15px;
+  background:rgba(255,255,255,0.08);
+  border-radius:12px;
 }
 
 button{
-padding:12px 20px;
-margin-top:10px;
-border:none;
-border-radius:10px;
-background:linear-gradient(45deg,#3b82f6,#a855f7);
-color:white;
-font-size:16px;
+  padding:12px;
+  margin:10px;
+  border:none;
+  border-radius:10px;
+  background:#6a5cff;
+  color:white;
+  font-size:16px;
+  cursor:pointer;
 }
 
 textarea{
-width:90%;
-height:80px;
-margin-top:10px;
-border-radius:10px;
-padding:10px;
-font-size:16px;
-}
-
-.pop{
-position:absolute;
-font-size:22px;
-animation:pop 0.8s forwards;
-}
-
-@keyframes pop{
-0%{transform:scale(0);}
-100%{transform:scale(2);opacity:0;}
+  width:90%;
+  height:80px;
+  border-radius:10px;
 }
 </style>
 </head>
 
 <body>
 
-<header>🫁 ARCADE — Active Reality Before Digital Education</header>
+<h1 class="title">A.R.C.A.D.E</h1>
 
-<!-- AR MODEL -->
-<model-viewer
-src="ImageToStl.com_respiratory-system.glb"
-ar
-ar-modes="webxr scene-viewer quick-look"
-camera-controls
-auto-rotate
-shadow-intensity="1"
-alt="Respiratory System">
-</model-viewer>
+<h2>🫁 Respiratory System</h2>
 
-<div class="card">
-<p id="lesson">
-The respiratory system allows humans to breathe.
-Air enters through the nose, travels to the lungs,
-and oxygen moves into the bloodstream while carbon dioxide leaves the body.
-</p>
+<p id="points">⭐ Points: 0 / 10</p>
 
-<button onclick="speakLesson(event)">🔊 Listen</button>
+<!-- AR AREA -->
+<div class="lesson-box">
+<h3>📷 Scan Flashcard</h3>
+<p>AR camera will appear here (next step).</p>
+<div style="height:250px;background:black;border-radius:10px;"></div>
 </div>
 
-<div class="card">
-<h3>Reflection</h3>
-<textarea id="reflection" placeholder="What did you learn?"></textarea>
-<br>
-<button onclick="submitReflection(event)">Submit</button>
-<p id="points"></p>
+<!-- TALKING LESSON -->
+<div class="lesson-box">
+<h3>🔊 Explanation</h3>
+
+<button onclick="speakLesson()">Listen</button>
+
+<p>
+The respiratory system allows the body to breathe by exchanging oxygen and carbon dioxide through the lungs.
+</p>
+</div>
+
+<!-- REFLECTION -->
+<div class="lesson-box">
+<h3>💭 Reflection</h3>
+
+<textarea id="reflection" placeholder="What did you learn?"></textarea><br>
+
+<button onclick="submitReflection()">Submit</button>
+
 </div>
 
 <script>
-let points=0;
 
-function speakLesson(e){
-pop(e);
-const text=document.getElementById("lesson").innerText;
-speechSynthesis.speak(new SpeechSynthesisUtterance(text));
+let points = 0;
+
+function updatePoints(){
+ document.getElementById("points").innerText =
+ "⭐ Points: " + points + " / 10";
+
+ if(points >=10){
+   celebrate();
+ }
 }
 
-function submitReflection(e){
-pop(e);
-const text=document.getElementById("reflection").value;
+function speakLesson(){
+ const text = "The respiratory system allows the body to breathe by exchanging oxygen and carbon dioxide through the lungs.";
+ const speech = new SpeechSynthesisUtterance(text);
+ speech.rate = 1;
+ speech.pitch = 1;
+ speechSynthesis.speak(speech);
 
-if(text.length>5){
-points+=10;
-document.getElementById("points").innerText=
-"🎉 You earned 10 points! Total: "+points;
-document.getElementById("reflection").value="";
-}else{
-alert("Write more before submitting.");
-}
+ points +=3;
+ updatePoints();
+ emojiPop();
 }
 
-function pop(e){
-const emojis=["✨","🚀","⭐","🧬","💫"];
-const el=document.createElement("div");
-el.className="pop";
-el.innerText=emojis[Math.floor(Math.random()*emojis.length)];
-el.style.left=e.pageX+"px";
-el.style.top=e.pageY+"px";
-document.body.appendChild(el);
-setTimeout(()=>el.remove(),800);
+function submitReflection(){
+ const answer = document.getElementById("reflection").value;
+
+ if(answer.length < 3){
+   alert("Please write your reflection first.");
+   return;
+ }
+
+ points +=5;
+ updatePoints();
+ emojiPop();
 }
+
+function emojiPop(){
+ const emoji=document.createElement("div");
+ emoji.className="emoji";
+ emoji.innerText=["✨","⭐","🎉","🧠","🚀"][Math.floor(Math.random()*5)];
+ emoji.style.left=Math.random()*90+"vw";
+ emoji.style.top=Math.random()*90+"vh";
+ document.body.appendChild(emoji);
+ setTimeout(()=>emoji.remove(),1000);
+}
+
+function celebrate(){
+ for(let i=0;i<20;i++){
+   setTimeout(emojiPop,i*100);
+ }
+}
+
 </script>
 
 </body>
