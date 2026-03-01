@@ -1,76 +1,75 @@
 <!DOCTYPE html>
-<html lang="en">
+<html>
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>A.R.C.A.D.E</title>
 
-<title>Coronary Circulation</title>
-
-<!-- MODEL VIEWER -->
 <script type="module"
 src="https://unpkg.com/@google/model-viewer/dist/model-viewer.min.js"></script>
 
 <style>
 
 body{
-    font-family: Arial, sans-serif;
-    background:#f4f8ff;
-    text-align:center;
-    margin:0;
+margin:0;
+font-family:Arial;
+background:linear-gradient(135deg,#050522,#0a0033,#140044);
+color:white;
+text-align:center;
 }
 
-/* HEADER */
-header{
-    background:#c62828;
-    color:white;
-    padding:15px;
-    font-size:22px;
-    font-weight:bold;
+h1{
+color:#9cf;
+text-shadow:0 0 15px #6cf,0 0 25px #a0f;
 }
 
-/* MODEL AREA */
 model-viewer{
-    width:100%;
-    height:420px;
-    background:white;
+width:100%;
+height:60vh;
+background:#00000022;
 }
 
-/* BUTTONS */
+.panel{
+background:rgba(10,0,40,0.85);
+padding:15px;
+border-top:2px solid #7a5cff;
+}
+
 button{
-    padding:12px 18px;
-    margin:8px;
-    border:none;
-    border-radius:10px;
-    font-size:16px;
-    cursor:pointer;
-    color:white;
+background:linear-gradient(45deg,#3a6cff,#a020f0);
+border:none;
+color:white;
+padding:12px;
+margin:6px;
+border-radius:12px;
+font-size:15px;
+box-shadow:0 0 12px #7af;
 }
 
-.listen{
-    background:#1565c0;
+textarea{
+width:90%;
+height:70px;
+border-radius:10px;
+border:none;
+padding:8px;
 }
 
-.ar{
-    background:#2e7d32;
+#points{
+font-size:18px;
+color:#7cffea;
+text-shadow:0 0 10px cyan;
 }
 
-.submit{
-    background:#c62828;
+.emoji{
+position:fixed;
+font-size:28px;
+animation:pop 1s forwards;
 }
 
-/* INFO BOX */
-.info{
-    padding:15px;
-    font-size:16px;
-}
-
-/* QUIZ */
-.quiz{
-    background:white;
-    margin:15px;
-    padding:15px;
-    border-radius:12px;
-    box-shadow:0 2px 6px rgba(0,0,0,0.2);
+@keyframes pop{
+0%{transform:scale(0);}
+50%{transform:scale(1.4);}
+100%{transform:translateY(-120px);opacity:0;}
 }
 
 </style>
@@ -78,98 +77,96 @@ button{
 
 <body>
 
-<header>
-🫀 Coronary Circulation
-</header>
+<h1>🧠 A.R.C.A.D.E</h1>
+<h2>❤️ Coronary Circulation</h2>
 
-<!-- 3D MODEL -->
+<!-- 3D + AR MODEL -->
 <model-viewer
-src="coronary.glb"
+src="models/coronary.glb"
 ar
 ar-modes="webxr scene-viewer quick-look"
 camera-controls
 auto-rotate
-scale="1 1 1"
 shadow-intensity="1"
-interaction-prompt="auto"
-touch-action="pan-y"
->
+exposure="1">
+
+<button slot="ar-button">
+👁 View in AR
+</button>
+
 </model-viewer>
 
-<!-- BUTTONS -->
-<button class="listen" onclick="listenText()">🔊 Listen</button>
+<div class="panel">
 
-<button class="ar" onclick="openAR()">📱 View in AR</button>
+<div id="points">Points: 0 ⭐</div>
 
-<!-- INFORMATION -->
-<div class="info" id="lessonText">
-Coronary circulation is the movement of blood through the vessels that supply
-the heart muscle itself. The coronary arteries deliver oxygen-rich blood to the
-heart, while the coronary veins remove oxygen-poor blood. This circulation is
-important because the heart needs its own blood supply to keep pumping
-throughout the body.
-</div>
+<button onclick="listenLesson()">🔊 Listen</button>
 
-<!-- QUIZ / FEEDBACK -->
-<div class="quiz">
-<h3>Quick Check</h3>
+<br>
 
-<p>What do coronary arteries supply?</p>
+<textarea id="reflection"
+placeholder="What did you learn about coronary circulation?"></textarea>
 
-<label><input type="radio" name="q1" value="0"> The lungs</label><br>
-<label><input type="radio" name="q1" value="1"> The heart muscle</label><br>
-<label><input type="radio" name="q1" value="0"> The brain</label><br><br>
+<br>
 
-<button class="submit" onclick="checkAnswer()">Submit Answer</button>
-
-<p id="result"></p>
-<p>⭐ Points: <span id="points">0</span></p>
+<button onclick="submitReflection()">Submit Reflection</button>
 
 </div>
 
 <script>
 
-/* TEXT TO SPEECH */
-function listenText(){
-    let text =
-    document.getElementById("lessonText").innerText;
+let points=0;
 
-    let speech = new SpeechSynthesisUtterance(text);
-    speech.rate = 1;
-    speech.pitch = 1;
+const lessonText =
+"Coronary circulation is the flow of blood through the vessels that supply the heart muscle itself. "+
+"It ensures the heart receives oxygen and nutrients necessary to pump blood effectively throughout the body.";
 
-    window.speechSynthesis.speak(speech);
+function listenLesson(){
+const speech=new SpeechSynthesisUtterance(lessonText);
+speech.rate=0.9;
+speech.pitch=1;
+speech.lang="en-US";
+speechSynthesis.cancel();
+speechSynthesis.speak(speech);
+emojiBurst();
 }
 
-/* OPEN AR */
-function openAR(){
-    const viewer = document.querySelector("model-viewer");
-    viewer.activateAR();
+function submitReflection(){
+
+const text=document.getElementById("reflection").value;
+
+if(text.trim()===""){
+alert("Write your reflection first!");
+return;
 }
 
-/* POINT SYSTEM */
-let points = 0;
+points+=10;
+document.getElementById("points").innerText=
+"Points: "+points+" ⭐";
 
-function checkAnswer(){
+emojiBurst();
+confetti();
 
-    let answer =
-    document.querySelector('input[name="q1"]:checked');
+document.getElementById("reflection").value="";
+}
 
-    if(!answer){
-        alert("Select an answer first!");
-        return;
-    }
+function emojiBurst(){
+const emojis=["✨","🎉","⭐","💫","❤️"];
+for(let i=0;i<6;i++){
+const e=document.createElement("div");
+e.className="emoji";
+e.innerText=emojis[Math.floor(Math.random()*emojis.length)];
+e.style.left=Math.random()*100+"vw";
+e.style.top="80vh";
+document.body.appendChild(e);
+setTimeout(()=>e.remove(),1000);
+}
+}
 
-    if(answer.value == "1"){
-        points += 10;
-        document.getElementById("result").innerHTML =
-        "✅ Correct! Coronary arteries supply the heart muscle.";
-    }else{
-        document.getElementById("result").innerHTML =
-        "❌ Try again!";
-    }
-
-    document.getElementById("points").innerText = points;
+function confetti(){
+for(let i=0;i<25;i++){
+setTimeout(emojiBurst,i*80);
+}
 }
 
 </script>
