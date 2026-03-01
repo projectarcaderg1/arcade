@@ -1,191 +1,139 @@
 <!DOCTYPE html>
-<html lang="en">
+<html>
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>A.R.C.A.D.E - Respiratory System</title>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>ARCADE Respiratory System</title>
 
-<!-- A-Frame -->
-<script src="https://aframe.io/releases/1.4.2/aframe.min.js"></script>
-<!-- AR.js / WebXR -->
-<script src="https://cdn.jsdelivr.net/npm/aframe-ar@1.8.0/dist/aframe-ar.min.js"></script>
+<!-- Google model-viewer (SUPER STABLE AR) -->
+<script type="module" src="https://unpkg.com/@google/model-viewer/dist/model-viewer.min.js"></script>
 
 <style>
-body {
-  margin: 0;
-  font-family: Arial;
-  background: linear-gradient(135deg,#050522,#0a0033,#140044);
-  color: white;
-  overflow: hidden;
+body{
+margin:0;
+font-family:Arial;
+background:linear-gradient(135deg,#0a0f2c,#1a0f3d,#2b0f5e);
+color:white;
+text-align:center;
 }
 
-/* AR Scene Fullscreen */
-a-scene {
-  width: 100%;
-  height: 100%;
-  position: fixed;
-  top: 0;
-  left: 0;
-  z-index: 1;
+header{
+padding:20px;
+font-size:26px;
+font-weight:bold;
+color:#c084fc;
+text-shadow:0 0 15px #a855f7,0 0 25px #3b82f6;
 }
 
-/* UI Panel */
-.ui {
-  position: fixed;
-  bottom: 0;
-  width: 100%;
-  max-width: 420px;
-  left: 50%;
-  transform: translateX(-50%);
-  background: rgba(10,0,40,0.85);
-  padding: 15px;
-  border-top: 2px solid #7a5cff;
-  text-align: center;
-  z-index: 2;
-  backdrop-filter: blur(10px);
+model-viewer{
+width:100%;
+height:60vh;
+background:black;
 }
 
-/* Title */
-h2 {
-  margin: 5px;
-  color: #9cf;
-  text-shadow: 0 0 10px #6cf,0 0 20px #a0f;
+.card{
+margin:15px;
+padding:15px;
+background:rgba(255,255,255,0.1);
+border-radius:12px;
 }
 
-/* Buttons */
-button {
-  background: linear-gradient(45deg,#3a6cff,#a020f0);
-  border: none;
-  color: white;
-  padding: 10px 15px;
-  margin: 5px;
-  border-radius: 10px;
-  font-size: 14px;
-  box-shadow: 0 0 10px #7af;
-  cursor: pointer;
+button{
+padding:12px 20px;
+margin-top:10px;
+border:none;
+border-radius:10px;
+background:linear-gradient(45deg,#3b82f6,#a855f7);
+color:white;
+font-size:16px;
 }
 
-/* Reflection Box */
-textarea {
-  width: 90%;
-  height: 60px;
-  border-radius: 10px;
-  border: none;
-  padding: 8px;
-  margin-top: 5px;
+textarea{
+width:90%;
+height:80px;
+margin-top:10px;
+border-radius:10px;
+padding:10px;
+font-size:16px;
 }
 
-/* Points */
-#points {
-  font-size: 18px;
-  color: #7cffea;
-  text-shadow: 0 0 10px cyan;
+.pop{
+position:absolute;
+font-size:22px;
+animation:pop 0.8s forwards;
 }
 
-/* Confetti / Emoji */
-.emoji {
-  position: fixed;
-  font-size: 30px;
-  animation: pop 1s ease forwards;
-  pointer-events: none;
-  z-index: 3;
-}
-
-@keyframes pop {
-  0% { transform: scale(0); }
-  50% { transform: scale(1.5); }
-  100% { transform: translateY(-120px); opacity: 0; }
+@keyframes pop{
+0%{transform:scale(0);}
+100%{transform:scale(2);opacity:0;}
 }
 </style>
 </head>
 
 <body>
 
-<!-- AR Scene (Hidden initially) -->
-<a-scene embedded arjs="sourceType: webcam;" id="arScene" style="display:none;">
-  <a-camera></a-camera>
+<header>🫁 ARCADE — Active Reality Before Digital Education</header>
 
-  <!-- 3D Model -->
-  <a-entity position="0 0 -1">
-    <a-gltf-model 
-      src="models/respiratory-optimized.glb" 
-      scale="0.02 0.02 0.02" 
-      rotation="0 180 0" 
-      animation="property: rotation; to: 0 360 0; loop: true; dur: 15000">
-    </a-gltf-model>
-  </a-entity>
-</a-scene>
+<!-- AR MODEL -->
+<model-viewer
+src="ImageToStl.com_respiratory-system.glb"
+ar
+ar-modes="webxr scene-viewer quick-look"
+camera-controls
+auto-rotate
+shadow-intensity="1"
+alt="Respiratory System">
+</model-viewer>
 
-<!-- UI Panel -->
-<div class="ui">
-<h2>🫁 Respiratory System</h2>
-<div id="points">Points: 0 ⭐</div>
+<div class="card">
+<p id="lesson">
+The respiratory system allows humans to breathe.
+Air enters through the nose, travels to the lungs,
+and oxygen moves into the bloodstream while carbon dioxide leaves the body.
+</p>
 
-<button id="arBtn">📱 View in AR</button>
-<button onclick="listenLesson()">🔊 Listen</button>
-<br>
+<button onclick="speakLesson(event)">🔊 Listen</button>
+</div>
+
+<div class="card">
+<h3>Reflection</h3>
 <textarea id="reflection" placeholder="What did you learn?"></textarea>
 <br>
-<button onclick="submitReflection()">✅ Submit Reflection</button>
+<button onclick="submitReflection(event)">Submit</button>
+<p id="points"></p>
 </div>
 
 <script>
-// Points
-let points = 0;
+let points=0;
 
-// AR Button
-document.getElementById("arBtn").addEventListener("click", () => {
-  document.getElementById("arScene").style.display = "block";
-  document.getElementById("arBtn").style.display = "none";
-});
-
-// Lesson Text
-const lessonText = "The respiratory system helps the body breathe. It allows oxygen to enter the lungs and carbon dioxide to leave the body. Main parts include the nose, trachea, lungs, and diaphragm.";
-
-// Listen Lesson Button
-function listenLesson() {
-  const speech = new SpeechSynthesisUtterance(lessonText);
-  speech.rate = 0.9;
-  speech.pitch = 1;
-  speech.lang = "en-US";
-  speechSynthesis.cancel();
-  speechSynthesis.speak(speech);
-  emojiBurst();
+function speakLesson(e){
+pop(e);
+const text=document.getElementById("lesson").innerText;
+speechSynthesis.speak(new SpeechSynthesisUtterance(text));
 }
 
-// Submit Reflection Button
-function submitReflection() {
-  const text = document.getElementById("reflection").value;
-  if(text.trim() === ""){
-    alert("Write your reflection first!");
-    return;
-  }
-  points += 10;
-  document.getElementById("points").innerText = "Points: " + points + " ⭐";
-  emojiBurst();
-  if(points >= 10) { confettiExplosion(); }
-  document.getElementById("reflection").value = "";
+function submitReflection(e){
+pop(e);
+const text=document.getElementById("reflection").value;
+
+if(text.length>5){
+points+=10;
+document.getElementById("points").innerText=
+"🎉 You earned 10 points! Total: "+points;
+document.getElementById("reflection").value="";
+}else{
+alert("Write more before submitting.");
+}
 }
 
-// Small Emoji Pop
-function emojiBurst() {
-  const emojis = ["✨","🎉","⭐","💫","🧠"];
-  for(let i=0;i<6;i++){
-    const e = document.createElement("div");
-    e.className="emoji";
-    e.innerText = emojis[Math.floor(Math.random()*emojis.length)];
-    e.style.left = Math.random()*100 + "vw";
-    e.style.top = "80vh";
-    document.body.appendChild(e);
-    setTimeout(()=>e.remove(),1000);
-  }
-}
-
-// Confetti Explosion
-function confettiExplosion() {
-  for(let i=0;i<25;i++){
-    setTimeout(emojiBurst,i*80);
-  }
+function pop(e){
+const emojis=["✨","🚀","⭐","🧬","💫"];
+const el=document.createElement("div");
+el.className="pop";
+el.innerText=emojis[Math.floor(Math.random()*emojis.length)];
+el.style.left=e.pageX+"px";
+el.style.top=e.pageY+"px";
+document.body.appendChild(el);
+setTimeout(()=>el.remove(),800);
 }
 </script>
 
