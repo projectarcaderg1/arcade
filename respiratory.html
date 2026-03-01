@@ -3,154 +3,194 @@
 <head>
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-<!-- AFRAME -->
+<title>A.R.C.A.D.E Respiratory</title>
+
 <script src="https://aframe.io/releases/1.4.2/aframe.min.js"></script>
-
-<!-- MINDAR -->
-<script src="https://cdn.jsdelivr.net/npm/mind-ar@1.2.5/dist/mindar-image-aframe.prod.js"></script>
-
-<title>A.R.C.A.D.E</title>
+<script src="https://cdn.jsdelivr.net/npm/mind-ar@1.2.2/dist/mindar-image-aframe.prod.js"></script>
 
 <style>
-body{
-margin:0;
-font-family:Arial;
-background:linear-gradient(135deg,#0b0f2a,#2a0b4f);
-color:white;
-text-align:center;
+
+/* FULL CAMERA FIX */
+html, body{
+  margin:0;
+  height:100%;
+  overflow:hidden;
+  font-family:Arial;
+  background:black;
 }
 
-.ui{
-position:fixed;
-bottom:10px;
-width:100%;
-z-index:2;
+a-scene{
+  position:fixed !important;
+  top:0;
+  left:0;
+  width:100%;
+  height:100%;
+  z-index:0;
+}
+
+/* UI ABOVE CAMERA */
+#ui{
+  position:fixed;
+  bottom:10px;
+  left:50%;
+  transform:translateX(-50%);
+  width:90%;
+  max-width:420px;
+  background:rgba(10,10,40,0.85);
+  padding:15px;
+  border-radius:15px;
+  text-align:center;
+  color:white;
+  z-index:10;   /* IMPORTANT */
 }
 
 button{
-background:linear-gradient(45deg,#4cc9ff,#b517ff);
-border:none;
-color:white;
-padding:12px;
-margin:5px;
-border-radius:10px;
-font-size:16px;
-box-shadow:0 0 15px #8a2be2;
+  padding:10px;
+  margin:6px;
+  border:none;
+  border-radius:10px;
+  background:linear-gradient(45deg,#3b82f6,#a855f7);
+  color:white;
+  font-size:16px;
 }
 
 textarea{
-width:80%;
-height:70px;
-border-radius:10px;
-padding:10px;
-margin-top:5px;
+  width:95%;
+  height:70px;
+  border-radius:8px;
 }
 
-#points{
-font-size:18px;
-margin-top:5px;
+/* Confetti */
+.emoji{
+  position:fixed;
+  font-size:28px;
+  animation:fly 1s forwards;
+  z-index:20;
 }
+
+@keyframes fly{
+  from{transform:scale(0);}
+  to{transform:translateY(-140px) scale(1.5);opacity:0;}
+}
+
 </style>
 </head>
 
 <body>
 
-<div class="ui">
-<h2>A.R.C.A.D.E</h2>
-
-<button onclick="speakLesson()">🔊 Listen</button>
-
-<br>
-
-<textarea id="reflection"
-placeholder="What did you learn?"></textarea>
-
-<br>
-
-<button onclick="submitReflection()">Submit</button>
-
-<div id="points">⭐ Points: 0</div>
-</div>
-
+<!-- AR SCENE -->
 <a-scene
-mindar-image="imageTargetSrc: targets/respiratory.mind;"
-color-space="sRGB"
-embedded
-vr-mode-ui="enabled:false"
-device-orientation-permission-ui="enabled:false"
->
+ mindar-image="imageTargetSrc: targets/respiratory.mind;"
+ vr-mode-ui="enabled:false"
+ device-orientation-permission-ui="enabled:true"
+ renderer="colorManagement:true">
 
-<!-- CAMERA -->
-<a-camera position="0 0 0" look-controls="enabled:false"></a-camera>
-
-<!-- STRONG LIGHTING (THIS FIXES INVISIBLE MODEL) -->
-<a-light type="ambient" intensity="2"></a-light>
-<a-light type="directional" position="0 2 1" intensity="3"></a-light>
-
-<!-- PRELOAD MODEL -->
 <a-assets>
-<a-asset-item id="respModel" src="models/respiratory.glb"></a-asset-item>
+<a-asset-item id="respModel"
+src="models/ImageToStl.com_respiratory-system.glb">
+</a-asset-item>
 </a-assets>
 
-<!-- IMAGE TARGET -->
+<a-light type="ambient" intensity="1"></a-light>
+<a-light type="directional" position="0 2 1"></a-light>
+
 <a-entity mindar-image-target="targetIndex:0">
 
 <a-gltf-model
 src="#respModel"
 position="0 0 0"
-rotation="0 180 0"
-scale="0.08 0.08 0.08"
-visible="true">
+scale="0.2 0.2 0.2"
+rotation="0 0 0"
+animation="property: rotation; to:0 360 0; loop:true; dur:15000">
 </a-gltf-model>
 
 </a-entity>
 
+<a-camera position="0 0 0" look-controls="enabled:false"></a-camera>
+
 </a-scene>
 
-<script>
-let points=0;
+<!-- UI -->
+<div id="ui">
 
-function speakLesson(){
-const text="The respiratory system allows humans to breathe. The lungs exchange oxygen and carbon dioxide to support life.";
+<div id="points">Points: 0 ⭐</div>
+
+<button id="listenBtn">🔊 Listen Lesson</button>
+<button id="submitBtn">✅ Submit</button>
+
+<p>Reflection:</p>
+<textarea id="reflection"></textarea>
+
+</div>
+
+<script>
+
+let points=0;
+let listened=false;
+
+/* LISTEN BUTTON FIX */
+document.getElementById("listenBtn").onclick=function(){
+
+const speech=new SpeechSynthesisUtterance(
+"The respiratory system allows us to breathe. Oxygen enters the lungs and carbon dioxide leaves the body."
+);
+
+speech.rate=0.9;
+speech.pitch=1.1;
+
 speechSynthesis.cancel();
-speechSynthesis.speak(new SpeechSynthesisUtterance(text));
+speechSynthesis.speak(speech);
+
+listened=true;
+emojiBurst();
+};
+
+
+/* SUBMIT BUTTON */
+document.getElementById("submitBtn").onclick=function(){
+
+const text=document.getElementById("reflection").value;
+
+if(!listened){
+alert("Listen to the lesson first.");
+return;
 }
 
-function submitReflection(){
-const value=document.getElementById("reflection").value;
-
-if(value.trim()===""){
-alert("Write your reflection first!");
+if(text.length<5){
+alert("Write a longer reflection.");
 return;
 }
 
 points+=10;
-document.getElementById("points").innerText="⭐ Points: "+points;
+document.getElementById("points").innerText=
+"Points: "+points+" ⭐";
 
-celebrate();
-}
+emojiBurst(true);
+};
 
-function celebrate(){
-for(let i=0;i<25;i++){
-let e=document.createElement("div");
-e.innerText=["🎉","✨","⭐","💜","🎊"][Math.floor(Math.random()*5)];
-e.style.position="fixed";
-e.style.left=Math.random()*100+"vw";
-e.style.top="100vh";
-e.style.fontSize="24px";
-e.style.animation="fall 2s linear";
+
+/* CONFETTI */
+function emojiBurst(big=false){
+
+const emojis=big?
+["🎉","✨","⭐","🚀","🌟","💫"]:
+["✨","⭐"];
+
+for(let i=0;i<(big?25:6);i++){
+
+const e=document.createElement("div");
+e.className="emoji";
+e.innerText=emojis[Math.floor(Math.random()*emojis.length)];
+
+e.style.left=Math.random()*window.innerWidth+"px";
+e.style.top=window.innerHeight+"px";
+
 document.body.appendChild(e);
-setTimeout(()=>e.remove(),2000);
+
+setTimeout(()=>e.remove(),1000);
 }
 }
 
-const style=document.createElement("style");
-style.innerHTML=`
-@keyframes fall{
-0%{transform:translateY(0);}
-100%{transform:translateY(-100vh);}
-}`;
-document.head.appendChild(style);
 </script>
 
 </body>
