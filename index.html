@@ -13,7 +13,7 @@
 body{
   margin:0;
   font-family:'Orbitron',sans-serif;
-  background:radial-gradient(circle at top,#0b0033,#020014);
+  background: radial-gradient(circle at top,#0b0033,#020014);
   color:white;
   text-align:center;
   overflow-x:hidden;
@@ -22,29 +22,37 @@ body{
 /* TITLE */
 h1{
   font-size:2.3em;
-  margin-top:30px;
+  margin-top:35px;
   color:#7df9ff;
   text-shadow:
     0 0 10px #00f7ff,
-    0 0 30px #7a00ff,
-    0 0 50px #7a00ff;
-}
-
-/* subtitle */
-.subtitle{
-  opacity:.85;
+    0 0 25px #7a00ff,
+    0 0 45px #7a00ff;
+  animation: glow 2s infinite alternate;
   padding:0 15px;
 }
 
-/* BUTTONS */
+@keyframes glow{
+  from{ text-shadow:0 0 10px #00f7ff;}
+  to{ text-shadow:0 0 30px #7a00ff;}
+}
+
+.subtitle{
+  opacity:.85;
+  margin-bottom:25px;
+  font-size:14px;
+}
+
+/* BUTTON GRID */
 .container{
   display:flex;
   flex-direction:column;
   align-items:center;
-  gap:16px;
-  margin-top:25px;
+  gap:18px;
+  margin-top:15px;
 }
 
+/* BUTTON STYLE */
 .arcade-btn{
   width:270px;
   padding:15px;
@@ -60,6 +68,7 @@ h1{
 
 .arcade-btn:hover{
   transform:scale(1.08);
+  box-shadow:0 0 30px #00f7ff;
 }
 
 /* POPUP */
@@ -73,7 +82,7 @@ h1{
   border-radius:15px;
   padding:20px;
   width:85%;
-  max-width:400px;
+  max-width:420px;
   box-shadow:0 0 25px #7a00ff;
   transition:.3s;
   z-index:100;
@@ -90,13 +99,14 @@ h1{
   padding:8px 14px;
   border-radius:8px;
   color:white;
+  cursor:pointer;
 }
 
-/* EMOJIS */
+/* EMOJI EFFECT */
 .emoji{
   position:fixed;
   font-size:24px;
-  animation:floatUp 1.5s forwards;
+  animation: floatUp 1.5s forwards;
   pointer-events:none;
 }
 
@@ -105,27 +115,18 @@ h1{
   100%{opacity:0; transform:translateY(-120px);}
 }
 
-/* POINT DISPLAY */
-.points{
-  margin-top:10px;
-  font-size:18px;
-  color:#ffd700;
-  text-shadow:0 0 10px gold;
-}
-
 </style>
 </head>
 
 <body>
 
-<h1>🚀 A.R.C.A.D.E</h1>
-<p class="subtitle">
+<h1>ARCADE<br>
+<span style="font-size:14px;">
 Augmented Reality for Creative and Active Digital Education
-</p>
+</span>
+</h1>
 
-<div class="points">
-⭐ Total Points: <span id="points">0</span>
-</div>
+<p class="subtitle">Interactive Science Learning Experience 🚀</p>
 
 <div class="container">
 
@@ -140,7 +141,7 @@ Augmented Reality for Creative and Active Digital Education
 </button>
 
 <button class="arcade-btn" onclick="funFact()">
-🧠 Science Trivia
+🎲 Science Trivia
 </button>
 
 <button class="arcade-btn" onclick="toggleSound()">
@@ -149,57 +150,62 @@ Augmented Reality for Creative and Active Digital Education
 
 </div>
 
+
 <!-- ABOUT -->
 <div id="about" class="popup">
-<h3>✨ About ARCADE</h3>
+<h3>✨ What is ARCADE?</h3>
 <p>
-ARCADE enhances learning using Augmented Reality,
-interactive 3D exploration, and reflection-based engagement.
-Students learn by seeing, hearing, and interacting.
+ARCADE is an innovative educational platform that combines
+Augmented Reality, 3D visualization, and interactive feedback
+to enhance engagement and active learning among students.
 </p>
 <button class="close" onclick="closePopup()">Close</button>
 </div>
+
 
 <!-- HOW -->
 <div id="how" class="popup">
-<h3>🧭 Instructions</h3>
+<h3>🧭 How to Use</h3>
 <p>
 1️⃣ Open Lessons<br>
-2️⃣ Explore 3D Model<br>
-3️⃣ Tap View in AR<br>
-4️⃣ Press Listen 🎧<br>
-5️⃣ Submit Reflection for Points ⭐<br><br>
-
-⚠️ Samsung Internet or Safari loads AR faster than Chrome.
+2️⃣ Select a topic<br>
+3️⃣ Explore the 3D model<br>
+4️⃣ Tap View in AR<br>
+5️⃣ Press Listen for explanation<br>
+6️⃣ Submit reflection to earn points ⭐
+<br><br>
+⚠️ For faster AR loading:<br>
+Use Samsung Internet or Safari.
 </p>
 <button class="close" onclick="closePopup()">Close</button>
 </div>
 
+
 <script>
 
-/* ---------- SOUND FIX (Mobile Compatible) ---------- */
+/* ---------- SOUND FIX (MOBILE SAFE) ---------- */
+let soundUnlocked=false;
 let soundOn=true;
-let audioContext;
+
+const clickSound=new Audio(
+"https://cdn.pixabay.com/download/audio/2022/03/15/audio_c8c8a73467.mp3"
+);
+
+document.body.addEventListener("click",()=>{
+  if(!soundUnlocked){
+    clickSound.play().then(()=>{
+      clickSound.pause();
+      clickSound.currentTime=0;
+      soundUnlocked=true;
+    }).catch(()=>{});
+  }
+},{once:true});
 
 function playSound(){
-  if(!soundOn) return;
-
-  if(!audioContext)
-    audioContext=new(window.AudioContext||window.webkitAudioContext)();
-
-  const osc=audioContext.createOscillator();
-  const gain=audioContext.createGain();
-
-  osc.connect(gain);
-  gain.connect(audioContext.destination);
-
-  osc.frequency.value=600;
-  osc.type="sine";
-
-  gain.gain.value=0.05;
-
-  osc.start();
-  osc.stop(audioContext.currentTime+0.1);
+  if(soundOn && soundUnlocked){
+    clickSound.currentTime=0;
+    clickSound.play();
+  }
 }
 
 function toggleSound(){
@@ -231,10 +237,10 @@ function showPopup(id){
 
 function closePopup(){
   document.querySelectorAll(".popup")
-  .forEach(p=>p.classList.remove("active"));
+    .forEach(p=>p.classList.remove("active"));
 }
 
-/* ---------- LESSON NAV ---------- */
+/* ---------- LESSON LINKS ---------- */
 function openLessons(){
   playSound();
   emojiBurst("🚀");
@@ -243,45 +249,35 @@ function openLessons(){
 `Choose Lesson:
 
 1 - Respiratory System
-2 - DNA Structure
+2 - DNA Double Helix
 3 - Pulmonary Circulation`
-  );
+);
 
   if(choice=="1") location.href="respiratory.html";
   if(choice=="2") location.href="dna.html";
   if(choice=="3") location.href="pulmonary.html";
 }
 
-/* ---------- MANY TRIVIAS ---------- */
+/* ---------- MANY SCIENCE TRIVIA ---------- */
 const facts=[
-"🫁 Lungs have 300 million air sacs!",
-"🧬 DNA fits inside every tiny cell.",
-"❤️ Your heart beats about 100,000 times daily.",
-"🌌 Some constellations are thousands of light years away.",
+"🫁 Your lungs have about 300 million alveoli!",
+"🧬 DNA fits inside every tiny cell nucleus.",
+"❤️ Your heart beats about 100,000 times a day.",
+"🌌 Some constellations are over 1,000 light-years away.",
 "🧠 Visual learning improves memory retention.",
-"🩸 Blood completes circulation in about 1 minute.",
-"⚡ Neurons send signals faster than race cars!",
-"🌋 Volcano cones form differently based on eruption style.",
-"💨 You breathe about 20,000 times a day.",
-"🧬 Humans share 99.9% DNA with each other."
+"🫀 Blood travels lungs ↔ heart continuously.",
+"🧬 Humans share 99.9% DNA similarity.",
+"🌋 Volcano cones form differently based on lava type.",
+"💨 Breathing rate increases during exercise.",
+"🔬 A single DNA strand contains billions of instructions.",
+"⭐ Stars we see tonight may no longer exist!",
+"🫁 Oxygen moves into blood through diffusion."
 ];
 
 function funFact(){
   playSound();
   emojiBurst("⭐");
   alert(facts[Math.floor(Math.random()*facts.length)]);
-}
-
-/* ---------- POINT SYSTEM ---------- */
-let points=localStorage.getItem("arcadePoints") || 0;
-document.getElementById("points").innerText=points;
-
-/* Achievement check */
-if(points>=30){
-  setTimeout(()=>{
-    emojiBurst("🎉");
-    alert("🏆 Achievement Unlocked: AR Explorer!");
-  },1000);
 }
 
 </script>
