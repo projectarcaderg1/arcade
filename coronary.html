@@ -1,0 +1,178 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<title>Coronary Circulation</title>
+
+<!-- MODEL VIEWER -->
+<script type="module"
+src="https://unpkg.com/@google/model-viewer/dist/model-viewer.min.js"></script>
+
+<style>
+
+body{
+    font-family: Arial, sans-serif;
+    background:#f4f8ff;
+    text-align:center;
+    margin:0;
+}
+
+/* HEADER */
+header{
+    background:#c62828;
+    color:white;
+    padding:15px;
+    font-size:22px;
+    font-weight:bold;
+}
+
+/* MODEL AREA */
+model-viewer{
+    width:100%;
+    height:420px;
+    background:white;
+}
+
+/* BUTTONS */
+button{
+    padding:12px 18px;
+    margin:8px;
+    border:none;
+    border-radius:10px;
+    font-size:16px;
+    cursor:pointer;
+    color:white;
+}
+
+.listen{
+    background:#1565c0;
+}
+
+.ar{
+    background:#2e7d32;
+}
+
+.submit{
+    background:#c62828;
+}
+
+/* INFO BOX */
+.info{
+    padding:15px;
+    font-size:16px;
+}
+
+/* QUIZ */
+.quiz{
+    background:white;
+    margin:15px;
+    padding:15px;
+    border-radius:12px;
+    box-shadow:0 2px 6px rgba(0,0,0,0.2);
+}
+
+</style>
+</head>
+
+<body>
+
+<header>
+🫀 Coronary Circulation
+</header>
+
+<!-- 3D MODEL -->
+<model-viewer
+src="coronary.glb"
+ar
+ar-modes="webxr scene-viewer quick-look"
+camera-controls
+auto-rotate
+scale="1 1 1"
+shadow-intensity="1"
+interaction-prompt="auto"
+touch-action="pan-y"
+>
+</model-viewer>
+
+<!-- BUTTONS -->
+<button class="listen" onclick="listenText()">🔊 Listen</button>
+
+<button class="ar" onclick="openAR()">📱 View in AR</button>
+
+<!-- INFORMATION -->
+<div class="info" id="lessonText">
+Coronary circulation is the movement of blood through the vessels that supply
+the heart muscle itself. The coronary arteries deliver oxygen-rich blood to the
+heart, while the coronary veins remove oxygen-poor blood. This circulation is
+important because the heart needs its own blood supply to keep pumping
+throughout the body.
+</div>
+
+<!-- QUIZ / FEEDBACK -->
+<div class="quiz">
+<h3>Quick Check</h3>
+
+<p>What do coronary arteries supply?</p>
+
+<label><input type="radio" name="q1" value="0"> The lungs</label><br>
+<label><input type="radio" name="q1" value="1"> The heart muscle</label><br>
+<label><input type="radio" name="q1" value="0"> The brain</label><br><br>
+
+<button class="submit" onclick="checkAnswer()">Submit Answer</button>
+
+<p id="result"></p>
+<p>⭐ Points: <span id="points">0</span></p>
+
+</div>
+
+<script>
+
+/* TEXT TO SPEECH */
+function listenText(){
+    let text =
+    document.getElementById("lessonText").innerText;
+
+    let speech = new SpeechSynthesisUtterance(text);
+    speech.rate = 1;
+    speech.pitch = 1;
+
+    window.speechSynthesis.speak(speech);
+}
+
+/* OPEN AR */
+function openAR(){
+    const viewer = document.querySelector("model-viewer");
+    viewer.activateAR();
+}
+
+/* POINT SYSTEM */
+let points = 0;
+
+function checkAnswer(){
+
+    let answer =
+    document.querySelector('input[name="q1"]:checked');
+
+    if(!answer){
+        alert("Select an answer first!");
+        return;
+    }
+
+    if(answer.value == "1"){
+        points += 10;
+        document.getElementById("result").innerHTML =
+        "✅ Correct! Coronary arteries supply the heart muscle.";
+    }else{
+        document.getElementById("result").innerHTML =
+        "❌ Try again!";
+    }
+
+    document.getElementById("points").innerText = points;
+}
+
+</script>
+
+</body>
+</html>
