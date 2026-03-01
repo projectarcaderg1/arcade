@@ -3,9 +3,8 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
-<title>A.R.C.A.D.E - Composite Volcano</title>
+<title>A.R.C.A.D.E - Composite Cone</title>
 
-<!-- MODEL VIEWER (MAGIC AR TOOL) -->
 <script type="module"
 src="https://unpkg.com/@google/model-viewer/dist/model-viewer.min.js"></script>
 
@@ -19,27 +18,23 @@ color:white;
 text-align:center;
 }
 
-/* TITLE */
 h1{
 color:#9cf;
 text-shadow:0 0 15px #6cf,0 0 25px #a0f;
 }
 
-/* MODEL VIEWER */
 model-viewer{
 width:100%;
 height:60vh;
 background:#00000022;
 }
 
-/* PANEL */
 .panel{
 background:rgba(10,0,40,0.85);
 padding:15px;
 border-top:2px solid #7a5cff;
 }
 
-/* BUTTONS */
 button{
 background:linear-gradient(45deg,#3a6cff,#a020f0);
 border:none;
@@ -51,7 +46,6 @@ font-size:15px;
 box-shadow:0 0 12px #7af;
 }
 
-/* TEXTBOX */
 textarea{
 width:90%;
 height:70px;
@@ -66,7 +60,6 @@ color:#7cffea;
 text-shadow:0 0 10px cyan;
 }
 
-/* EMOJI EFFECT */
 .emoji{
 position:fixed;
 font-size:28px;
@@ -85,17 +78,30 @@ animation:pop 1s forwards;
 <body>
 
 <h1>🌋 A.R.C.A.D.E</h1>
-<h2>Composite Volcano (Stratovolcano)</h2>
+<h2>Composite Cone Volcano</h2>
 
-<!-- 3D + AR MODEL -->
+<!-- FIXED MODEL VIEWER -->
 <model-viewer
 src="models/composite.glb"
+
 ar
 ar-modes="webxr scene-viewer quick-look"
+
 camera-controls
+touch-action="pan-y"
+interaction-prompt="none"
+
 auto-rotate
+rotation-per-second="20deg"
+
+scale="0.3 0.3 0.3"
+min-scale="0.1"
+max-scale="2"
+
 shadow-intensity="1"
-exposure="1">
+exposure="1.2"
+
+environment-image="neutral">
 
 <button slot="ar-button">
 👁 View in AR
@@ -112,7 +118,7 @@ exposure="1">
 <br>
 
 <textarea id="reflection"
-placeholder="What did you learn?"></textarea>
+placeholder="What did you learn about composite volcanoes?"></textarea>
 
 <br>
 
@@ -125,10 +131,10 @@ placeholder="What did you learn?"></textarea>
 let points=0;
 
 const lessonText =
-"A composite volcano, also called a stratovolcano, "+
-"is a tall cone-shaped volcano formed by layers of lava, ash, "+
-"and volcanic rocks. These volcanoes often have explosive eruptions. "+
-"Examples include Mount Fuji and Mount Mayon.";
+"A composite cone volcano, also called a stratovolcano, "+
+"is formed from layers of lava, ash, and rock. "+
+"It has steep sides and explosive eruptions due to thick magma. "+
+"A famous example is Mayon Volcano in the Philippines.";
 
 function listenLesson(){
 const speech=new SpeechSynthesisUtterance(lessonText);
@@ -160,7 +166,7 @@ document.getElementById("reflection").value="";
 }
 
 function emojiBurst(){
-const emojis=["🌋","✨","🎉","⭐","🔥"];
+const emojis=["✨","🎉","⭐","💫","🌋"];
 for(let i=0;i<6;i++){
 const e=document.createElement("div");
 e.className="emoji";
