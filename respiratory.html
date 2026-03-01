@@ -3,7 +3,6 @@
 <head>
 <meta charset="UTF-8">
 <title>A.R.C.A.D.E</title>
-
 <meta name="viewport" content="width=device-width, initial-scale=1">
 
 <!-- AFRAME + MINDAR -->
@@ -11,7 +10,6 @@
 <script src="https://cdn.jsdelivr.net/npm/mind-ar@1.2.5/dist/mindar-image-aframe.prod.js"></script>
 
 <style>
-
 body{
 margin:0;
 font-family:Arial;
@@ -43,14 +41,12 @@ text-align:center;
 backdrop-filter:blur(10px);
 }
 
-/* TITLE */
 h2{
 margin:5px;
 color:#9cf;
 text-shadow:0 0 10px #6cf,0 0 20px #a0f;
 }
 
-/* BUTTON STYLE */
 button{
 background:linear-gradient(45deg,#3a6cff,#a020f0);
 border:none;
@@ -63,7 +59,6 @@ box-shadow:0 0 10px #7af;
 cursor:pointer;
 }
 
-/* INPUT */
 textarea{
 width:90%;
 height:60px;
@@ -73,14 +68,12 @@ padding:8px;
 margin-top:5px;
 }
 
-/* POINTS */
 #points{
 font-size:18px;
 color:#7cffea;
 text-shadow:0 0 10px cyan;
 }
 
-/* LOADING SCREEN */
 #loading{
 position:fixed;
 top:50%;
@@ -104,81 +97,61 @@ pointer-events:none;
 50%{transform:scale(1.5);}
 100%{transform:translateY(-120px);opacity:0;}
 }
-
 </style>
 </head>
 
 <body>
-
 <div id="loading">🔬 Loading AR Experience...</div>
 
-<!-- AR SCENE -->
 <a-scene mindar-image="imageTargetSrc: targets/respiratory.mind;"
-vr-mode-ui="enabled:false"
-device-orientation-permission-ui="enabled:false">
+vr-mode-ui="enabled:false" device-orientation-permission-ui="enabled:false"
+renderer="colorManagement:true">
 
 <a-assets timeout="10000">
-
-<a-asset-item
-id="respModel"
-src="#respModel"
-</a-asset-item>
-
+<a-asset-item id="respModel" src="models/respiratory-optimized.glb"></a-asset-item>
 </a-assets>
 
-<a-camera position="0 0 0"></a-camera>
+<a-camera position="0 0 0" look-controls="enabled:false"></a-camera>
 
 <a-light type="ambient" intensity="1"></a-light>
 <a-light type="directional" position="1 1 1" intensity="1"></a-light>
 
-<a-entity position="0 0 -1">
-
+<!-- MINDAR TARGET -->
+<a-entity mindar-image-target="targetIndex:0">
 <a-gltf-model
 id="lungModel"
 src="#respModel"
 position="0 0 0"
 scale="0.005 0.005 0.005"
+rotation="0 0 0"
 visible="false"
 animation="property: rotation; to: 0 360 0; loop: true; dur: 20000">
 </a-gltf-model>
+</a-entity>
+
+</a-scene>
 
 <!-- UI -->
 <div class="ui">
-
 <h2>🫁 Respiratory System</h2>
-
 <div id="points">Points: 0 ⭐</div>
-
-<button onclick="listenLesson()">🔊 Listen</button>
-
-<br>
-
-<textarea id="reflection"
-placeholder="What did you learn?"></textarea>
-
-<br>
-
+<button onclick="listenLesson()">🔊 Listen</button><br>
+<textarea id="reflection" placeholder="What did you learn?"></textarea><br>
 <button onclick="submitReflection()">Submit Reflection</button>
-
 </div>
 
 <script>
-
 let points=0;
 
-/* REMOVE LOADING WHEN READY */
-document.querySelector("a-scene")
-.addEventListener("loaded",()=>{
+// Remove loading screen when AR scene ready
+document.querySelector("a-scene").addEventListener("loaded",()=>{
 document.getElementById("loading").style.display="none";
 });
 
-/* LESSON TEXT */
-const lessonText =
-"The respiratory system helps the body breathe. " +
-"It allows oxygen to enter the lungs and carbon dioxide to leave the body. " +
-"Main parts include the nose, trachea, lungs, and diaphragm.";
+// Lesson text
+const lessonText="The respiratory system helps the body breathe. Oxygen enters the lungs and carbon dioxide leaves the body.";
 
-/* LISTEN BUTTON */
+// Listen button
 function listenLesson(){
 const speech=new SpeechSynthesisUtterance(lessonText);
 speech.rate=0.9;
@@ -188,28 +161,17 @@ speechSynthesis.speak(speech);
 emojiBurst();
 }
 
-/* SUBMIT REFLECTION */
+// Submit reflection
 function submitReflection(){
-
 const text=document.getElementById("reflection").value;
-
-if(text.trim()===""){
-alert("Write your reflection first!");
-return;
-}
-
+if(text.trim()===""){alert("Write your reflection first!"); return;}
 points+=10;
-document.getElementById("points").innerText=
-"Points: "+points+" ⭐";
-
+document.getElementById("points").innerText="Points: "+points+" ⭐";
 emojiBurst();
-
-if(points>=10){
-confettiExplosion();
-}
+if(points>=10){confettiExplosion();}
 }
 
-/* SMALL EMOJI POP */
+// Emoji burst small
 function emojiBurst(){
 const emojis=["✨","🎉","⭐","💫","🧠"];
 for(let i=0;i<6;i++){
@@ -223,26 +185,18 @@ setTimeout(()=>e.remove(),1000);
 }
 }
 
-/* BIG CELEBRATION */
+// Big confetti explosion
 function confettiExplosion(){
-for(let i=0;i<25;i++){
-setTimeout(emojiBurst,i*80);
+for(let i=0;i<25;i++){setTimeout(emojiBurst,i*80);}
 }
-}
-// Step 4: Show model instantly when card is scanned
-const target = document.querySelector('[mindar-image-target]'); // select the AR target
-const model = document.querySelector('#lungModel');             // select your 3D model
 
-// When the marker is detected
-target.addEventListener("targetFound", () => {
-  model.setAttribute("visible", true);
-});
+// Step 4: Show model instantly when marker is scanned
+const target=document.querySelector('[mindar-image-target]');
+const model=document.querySelector('#lungModel');
 
-// When the marker is lost
-target.addEventListener("targetLost", () => {
-  model.setAttribute("visible", false);
-});
+target.addEventListener("targetFound",()=>{model.setAttribute("visible",true);});
+target.addEventListener("targetLost",()=>{model.setAttribute("visible",false);});
+
 </script>
-
 </body>
 </html>
