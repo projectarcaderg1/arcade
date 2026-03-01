@@ -1,0 +1,176 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>A.R.C.A.D.E</title>
+
+<script type="module"
+src="https://unpkg.com/@google/model-viewer/dist/model-viewer.min.js"></script>
+
+<style>
+
+body{
+margin:0;
+font-family:Arial;
+background:linear-gradient(135deg,#050522,#0a0033,#140044);
+color:white;
+text-align:center;
+}
+
+h1{
+color:#9cf;
+text-shadow:0 0 15px #6cf,0 0 25px #a0f;
+}
+
+model-viewer{
+width:100%;
+height:60vh;
+background:#00000022;
+}
+
+.panel{
+background:rgba(10,0,40,0.85);
+padding:15px;
+border-top:2px solid #7a5cff;
+}
+
+button{
+background:linear-gradient(45deg,#3a6cff,#a020f0);
+border:none;
+color:white;
+padding:12px;
+margin:6px;
+border-radius:12px;
+font-size:15px;
+box-shadow:0 0 12px #7af;
+}
+
+textarea{
+width:90%;
+height:70px;
+border-radius:10px;
+border:none;
+padding:8px;
+}
+
+#points{
+font-size:18px;
+color:#7cffea;
+text-shadow:0 0 10px cyan;
+}
+
+.emoji{
+position:fixed;
+font-size:28px;
+animation:pop 1s forwards;
+}
+
+@keyframes pop{
+0%{transform:scale(0);}
+50%{transform:scale(1.4);}
+100%{transform:translateY(-120px);opacity:0;}
+}
+
+</style>
+</head>
+
+<body>
+
+<h1>🧠 A.R.C.A.D.E</h1>
+<h2>🫀 Pulmonary Circulation</h2>
+
+<!-- 3D + AR MODEL -->
+<model-viewer
+src="models/pulmonary.glb"
+ar
+ar-modes="webxr scene-viewer quick-look"
+camera-controls
+auto-rotate
+shadow-intensity="1"
+exposure="1">
+
+<button slot="ar-button">
+👁 View in AR
+</button>
+
+</model-viewer>
+
+<div class="panel">
+
+<div id="points">Points: 0 ⭐</div>
+
+<button onclick="listenLesson()">🔊 Listen</button>
+
+<br>
+
+<textarea id="reflection"
+placeholder="What did you learn about Pulmonary Circulation?"></textarea>
+
+<br>
+
+<button onclick="submitReflection()">Submit Reflection</button>
+
+</div>
+
+<script>
+
+let points=0;
+
+const lessonText =
+"Pulmonary circulation carries blood from the heart to the lungs and back. "+
+"Oxygen-poor blood flows from the right ventricle to the lungs to get oxygen, "+
+"then returns to the left atrium of the heart to be pumped to the body.";
+
+function listenLesson(){
+const speech=new SpeechSynthesisUtterance(lessonText);
+speech.rate=0.9;
+speech.pitch=1;
+speech.lang="en-US";
+speechSynthesis.cancel();
+speechSynthesis.speak(speech);
+emojiBurst();
+}
+
+function submitReflection(){
+
+const text=document.getElementById("reflection").value;
+
+if(text.trim()===""){
+alert("Write your reflection first!");
+return;
+}
+
+points+=10;
+document.getElementById("points").innerText=
+"Points: "+points+" ⭐";
+
+emojiBurst();
+confetti();
+
+document.getElementById("reflection").value="";
+}
+
+function emojiBurst(){
+const emojis=["✨","🎉","⭐","💫","🫀"];
+for(let i=0;i<6;i++){
+const e=document.createElement("div");
+e.className="emoji";
+e.innerText=emojis[Math.floor(Math.random()*emojis.length)];
+e.style.left=Math.random()*100+"vw";
+e.style.top="80vh";
+document.body.appendChild(e);
+setTimeout(()=>e.remove(),1000);
+}
+}
+
+function confetti(){
+for(let i=0;i<25;i++){
+setTimeout(emojiBurst,i*80);
+}
+}
+
+</script>
+
+</body>
+</html>
