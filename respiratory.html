@@ -113,11 +113,18 @@ pointer-events:none;
 <div id="loading">🔬 Loading AR Experience...</div>
 
 <!-- AR SCENE -->
-<a-scene
-mindar-image="imageTargetSrc: targets/respiratory.mind;"
+<a-scene mindar-image="imageTargetSrc: targets/respiratory.mind;"
 vr-mode-ui="enabled:false"
-device-orientation-permission-ui="enabled:false"
-renderer="colorManagement:true">
+device-orientation-permission-ui="enabled:false">
+
+<a-assets timeout="10000">
+
+<a-asset-item
+id="respModel"
+src="#respModel"
+</a-asset-item>
+
+</a-assets>
 
 <a-camera position="0 0 0"></a-camera>
 
@@ -127,15 +134,13 @@ renderer="colorManagement:true">
 <a-entity position="0 0 -1">
 
 <a-gltf-model
-src="models/respiratory-optimized.glb"
+id="lungModel"
+src="#respModel"
 position="0 0 0"
 scale="0.005 0.005 0.005"
-rotation="0 0 0"
-animation="property: rotation; to: 0 360 0; loop: true; dur: 20000"
-visible="true">
+visible="false"
+animation="property: rotation; to: 0 360 0; loop: true; dur: 20000">
 </a-gltf-model>
-</a-entity>
-</a-scene>
 
 <!-- UI -->
 <div class="ui">
@@ -224,7 +229,19 @@ for(let i=0;i<25;i++){
 setTimeout(emojiBurst,i*80);
 }
 }
+// Step 4: Show model instantly when card is scanned
+const target = document.querySelector('[mindar-image-target]'); // select the AR target
+const model = document.querySelector('#lungModel');             // select your 3D model
 
+// When the marker is detected
+target.addEventListener("targetFound", () => {
+  model.setAttribute("visible", true);
+});
+
+// When the marker is lost
+target.addEventListener("targetLost", () => {
+  model.setAttribute("visible", false);
+});
 </script>
 
 </body>
