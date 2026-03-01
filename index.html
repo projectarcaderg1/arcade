@@ -245,17 +245,36 @@ function openLessons(){
   playSound();
   emojiBurst("🚀");
 
-  const choice=prompt(
-`Choose Lesson:
+  let choice = prompt(
+`📚 LESSON SELECTION 📚
 
-1 - Respiratory System
-2 - DNA Double Helix
-3 - Pulmonary Circulation`
-);
+Enter the NUMBER of the lesson you want to open:
 
-  if(choice=="1") location.href="respiratory.html";
-  if(choice=="2") location.href="dna.html";
-  if(choice=="3") location.href="pulmonary.html";
+1️⃣  Respiratory System
+2️⃣  DNA Double Helix
+3️⃣  Pulmonary Circulation
+
+⚠️ Type 1, 2, or 3 ONLY and press OK!`
+  );
+
+  // Trim and ensure valid input
+  if(choice) choice = choice.trim();
+
+  if(choice=="1"){
+    alert("🫁 Opening Respiratory System!");
+    location.href="respiratory.html";
+  }
+  else if(choice=="2"){
+    alert("🧬 Opening DNA Double Helix!");
+    location.href="dna.html";
+  }
+  else if(choice=="3"){
+    alert("🫀 Opening Pulmonary Circulation!");
+    location.href="pulmonary.html";
+  }
+  else{
+    alert("❌ Invalid choice! Please type 1, 2, or 3.");
+  }
 }
 
 /* ---------- MANY SCIENCE TRIVIA ---------- */
