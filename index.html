@@ -167,10 +167,10 @@ to enhance engagement and active learning among students.
 <div id="how" class="popup">
 <h3>🧭 How to Use</h3>
 <p>
-1️⃣ Click "Lessons"<br>
-2️⃣ Type the **number** of your topic carefully<br>
+1️⃣ Open Lessons<br>
+2️⃣ Select a topic<br>
 3️⃣ Explore the 3D model<br>
-4️⃣ Tap "View in AR"<br>
+4️⃣ Tap View in AR<br>
 5️⃣ Press Listen for explanation<br>
 6️⃣ Submit reflection to earn points ⭐
 <br><br>
@@ -240,23 +240,22 @@ function closePopup(){
     .forEach(p=>p.classList.remove("active"));
 }
 
-/* ---------- LESSON LINKS (NEW) ---------- */
+/* ---------- LESSON LINKS ---------- */
 function openLessons(){
   playSound();
   emojiBurst("🚀");
 
   const choice=prompt(
-`Choose a Lesson by typing the NUMBER:
+`Choose Lesson:
 
 1 - Respiratory System
-2 - DNA
-3 - Pulmonary Circulation
-  );
+2 - DNA Double Helix
+3 - Pulmonary Circulation`
+);
 
   if(choice=="1") location.href="respiratory.html";
-  else if(choice=="2") location.href="dna.html";
-  else if(choice=="3") location.href="pulmonary.html";
-  else alert("❌ Invalid number. Please type 1, 2, 3, or 4.");
+  if(choice=="2") location.href="dna.html";
+  if(choice=="3") location.href="pulmonary.html";
 }
 
 /* ---------- MANY SCIENCE TRIVIA ---------- */
@@ -272,10 +271,7 @@ const facts=[
 "💨 Breathing rate increases during exercise.",
 "🔬 A single DNA strand contains billions of instructions.",
 "⭐ Stars we see tonight may no longer exist!",
-"🫁 Oxygen moves into blood through diffusion.",
-"🫀 Coronary arteries supply blood to your heart muscle!",
-"🧪 Water makes up 70% of the human body!",
-"🌠 Some constellations are named after animals!"
+"🫁 Oxygen moves into blood through diffusion."
 ];
 
 function funFact(){
