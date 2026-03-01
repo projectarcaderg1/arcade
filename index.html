@@ -1,6 +1,7 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
+<meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
 <title>ARCADE - Augmented Reality for Creative and Active Digital Education</title>
@@ -10,89 +11,106 @@
 <style>
 
 body{
-margin:0;
-font-family:'Orbitron',sans-serif;
-background:radial-gradient(circle at top,#0b0033,#020014);
-color:white;
-text-align:center;
-overflow:hidden;
-}
-
-/* STAR BACKGROUND */
-canvas{
-position:fixed;
-top:0;
-left:0;
-z-index:-1;
+  margin:0;
+  font-family:'Orbitron',sans-serif;
+  background:radial-gradient(circle at top,#0b0033,#020014);
+  color:white;
+  text-align:center;
+  overflow-x:hidden;
 }
 
 /* TITLE */
 h1{
-margin-top:30px;
-color:#7df9ff;
-text-shadow:0 0 15px cyan,0 0 40px purple;
+  font-size:2.3em;
+  margin-top:30px;
+  color:#7df9ff;
+  text-shadow:
+    0 0 10px #00f7ff,
+    0 0 30px #7a00ff,
+    0 0 50px #7a00ff;
+}
+
+/* subtitle */
+.subtitle{
+  opacity:.85;
+  padding:0 15px;
 }
 
 /* BUTTONS */
 .container{
-display:flex;
-flex-direction:column;
-gap:15px;
-align-items:center;
-margin-top:20px;
+  display:flex;
+  flex-direction:column;
+  align-items:center;
+  gap:16px;
+  margin-top:25px;
 }
 
-.btn{
-width:270px;
-padding:15px;
-border:none;
-border-radius:14px;
-color:white;
-font-size:16px;
-cursor:pointer;
-background:linear-gradient(45deg,#00c3ff,#7a00ff);
-box-shadow:0 0 15px #7a00ff;
-transition:.25s;
+.arcade-btn{
+  width:270px;
+  padding:15px;
+  font-size:17px;
+  border:none;
+  border-radius:14px;
+  color:white;
+  cursor:pointer;
+  background:linear-gradient(45deg,#00c3ff,#7a00ff);
+  box-shadow:0 0 15px #7a00ff;
+  transition:.25s;
 }
 
-.btn:hover{
-transform:scale(1.07);
+.arcade-btn:hover{
+  transform:scale(1.08);
 }
 
-/* POINT + LEVEL */
-.info{
-margin-top:10px;
-font-size:18px;
-color:gold;
+/* POPUP */
+.popup{
+  position:fixed;
+  top:50%;
+  left:50%;
+  transform:translate(-50%,-50%) scale(0);
+  background:#0b0033;
+  border:2px solid #7a00ff;
+  border-radius:15px;
+  padding:20px;
+  width:85%;
+  max-width:400px;
+  box-shadow:0 0 25px #7a00ff;
+  transition:.3s;
+  z-index:100;
 }
 
-/* PROGRESS BAR */
-.progress{
-width:80%;
-height:14px;
-background:#111;
-border-radius:10px;
-margin:15px auto;
-overflow:hidden;
+.popup.active{
+  transform:translate(-50%,-50%) scale(1);
 }
 
-.bar{
-height:100%;
-background:linear-gradient(90deg,cyan,purple);
-width:0%;
-transition:1s;
+.close{
+  margin-top:15px;
+  background:#7a00ff;
+  border:none;
+  padding:8px 14px;
+  border-radius:8px;
+  color:white;
 }
 
-/* EMOJI */
+/* EMOJIS */
 .emoji{
-position:fixed;
-font-size:24px;
-animation:up 1.4s forwards;
+  position:fixed;
+  font-size:24px;
+  animation:floatUp 1.5s forwards;
+  pointer-events:none;
 }
 
-@keyframes up{
-0%{opacity:1;transform:translateY(0);}
-100%{opacity:0;transform:translateY(-120px);}
+@keyframes floatUp{
+  0%{opacity:1; transform:translateY(0);}
+  100%{opacity:0; transform:translateY(-120px);}
+}
+
+/* POINT DISPLAY */
+.points{
+  margin-top:10px;
+  font-size:18px;
+  color:#ffd700;
+  text-shadow:0 0 10px gold;
 }
 
 </style>
@@ -100,148 +118,170 @@ animation:up 1.4s forwards;
 
 <body>
 
-<canvas id="stars"></canvas>
-
 <h1>🚀 A.R.C.A.D.E</h1>
-<p>Augmented Reality for Creative and Active Digital Education</p>
+<p class="subtitle">
+Augmented Reality for Creative and Active Digital Education
+</p>
 
-<div class="info">
-⭐ Points: <span id="points">0</span> |
-Level: <span id="level">Explorer</span>
-</div>
-
-<div class="progress">
-<div class="bar" id="bar"></div>
+<div class="points">
+⭐ Total Points: <span id="points">0</span>
 </div>
 
 <div class="container">
 
-<button class="btn" onclick="openLessons()">📚 Lessons</button>
-<button class="btn" onclick="about()">✨ What is ARCADE?</button>
-<button class="btn" onclick="how()">🧭 How to Use</button>
-<button class="btn" onclick="fact()">🧠 Science Trivia</button>
+<button class="arcade-btn" onclick="openLessons()">📚 Lessons</button>
 
+<button class="arcade-btn" onclick="showPopup('about')">
+✨ What is ARCADE?
+</button>
+
+<button class="arcade-btn" onclick="showPopup('how')">
+🧭 How to Use
+</button>
+
+<button class="arcade-btn" onclick="funFact()">
+🧠 Science Trivia
+</button>
+
+<button class="arcade-btn" onclick="toggleSound()">
+🔊 Toggle Sound
+</button>
+
+</div>
+
+<!-- ABOUT -->
+<div id="about" class="popup">
+<h3>✨ About ARCADE</h3>
+<p>
+ARCADE enhances learning using Augmented Reality,
+interactive 3D exploration, and reflection-based engagement.
+Students learn by seeing, hearing, and interacting.
+</p>
+<button class="close" onclick="closePopup()">Close</button>
+</div>
+
+<!-- HOW -->
+<div id="how" class="popup">
+<h3>🧭 Instructions</h3>
+<p>
+1️⃣ Open Lessons<br>
+2️⃣ Explore 3D Model<br>
+3️⃣ Tap View in AR<br>
+4️⃣ Press Listen 🎧<br>
+5️⃣ Submit Reflection for Points ⭐<br><br>
+
+⚠️ Samsung Internet or Safari loads AR faster than Chrome.
+</p>
+<button class="close" onclick="closePopup()">Close</button>
 </div>
 
 <script>
 
-/* ---------- STAR BACKGROUND ---------- */
-const c=document.getElementById("stars");
-const ctx=c.getContext("2d");
-c.width=innerWidth;
-c.height=innerHeight;
+/* ---------- SOUND FIX (Mobile Compatible) ---------- */
+let soundOn=true;
+let audioContext;
 
-let stars=[];
-for(let i=0;i<80;i++){
-stars.push({x:Math.random()*c.width,
-y:Math.random()*c.height,
-s:Math.random()*2});
+function playSound(){
+  if(!soundOn) return;
+
+  if(!audioContext)
+    audioContext=new(window.AudioContext||window.webkitAudioContext)();
+
+  const osc=audioContext.createOscillator();
+  const gain=audioContext.createGain();
+
+  osc.connect(gain);
+  gain.connect(audioContext.destination);
+
+  osc.frequency.value=600;
+  osc.type="sine";
+
+  gain.gain.value=0.05;
+
+  osc.start();
+  osc.stop(audioContext.currentTime+0.1);
 }
 
-function animate(){
-ctx.clearRect(0,0,c.width,c.height);
-ctx.fillStyle="white";
-stars.forEach(st=>{
-ctx.fillRect(st.x,st.y,st.s,st.s);
-st.y+=0.2;
-if(st.y>c.height) st.y=0;
-});
-requestAnimationFrame(animate);
-}
-animate();
-
-/* ---------- SOUND ---------- */
-let audio;
-function sound(){
-audio=new(window.AudioContext||window.webkitAudioContext)();
-const osc=audio.createOscillator();
-const gain=audio.createGain();
-osc.connect(gain);
-gain.connect(audio.destination);
-osc.frequency.value=600;
-gain.gain.value=0.05;
-osc.start();
-osc.stop(audio.currentTime+0.1);
+function toggleSound(){
+  soundOn=!soundOn;
+  emojiBurst("🔊");
 }
 
-/* ---------- EMOJI ---------- */
-function emoji(icon){
-for(let i=0;i<8;i++){
-let e=document.createElement("div");
-e.className="emoji";
-e.innerText=icon;
-e.style.left=Math.random()*innerWidth+"px";
-e.style.top=(innerHeight-80)+"px";
-document.body.appendChild(e);
-setTimeout(()=>e.remove(),1400);
+/* ---------- EMOJI EFFECT ---------- */
+function emojiBurst(icon="✨"){
+  for(let i=0;i<10;i++){
+    const e=document.createElement("div");
+    e.className="emoji";
+    e.innerText=icon;
+
+    e.style.left=Math.random()*window.innerWidth+"px";
+    e.style.top=(window.innerHeight-80)+"px";
+
+    document.body.appendChild(e);
+    setTimeout(()=>e.remove(),1500);
+  }
 }
+
+/* ---------- POPUPS ---------- */
+function showPopup(id){
+  playSound();
+  emojiBurst("✨");
+  document.getElementById(id).classList.add("active");
 }
 
-/* ---------- POINT + LEVEL SYSTEM ---------- */
-let points=localStorage.getItem("arcadePoints")||0;
-points=parseInt(points);
-
-document.getElementById("points").innerText=points;
-
-function updateLevel(){
-
-let level="Explorer";
-if(points>=10) level="Scientist";
-if(points>=20) level="Innovator";
-if(points>=40) level="AR Master";
-
-document.getElementById("level").innerText=level;
-
-let percent=Math.min(points,40)/40*100;
-document.getElementById("bar").style.width=percent+"%";
+function closePopup(){
+  document.querySelectorAll(".popup")
+  .forEach(p=>p.classList.remove("active"));
 }
-updateLevel();
 
-/* ---------- NAVIGATION ---------- */
+/* ---------- LESSON NAV ---------- */
 function openLessons(){
-sound();
-emoji("🚀");
+  playSound();
+  emojiBurst("🚀");
 
-let c=prompt(
+  const choice=prompt(
 `Choose Lesson:
-1 Respiratory
-2 DNA
-3 Pulmonary`
-);
 
-if(c==1) location.href="respiratory.html";
-if(c==2) location.href="dna.html";
-if(c==3) location.href="pulmonary.html";
+1 - Respiratory System
+2 - DNA Structure
+3 - Pulmonary Circulation`
+  );
+
+  if(choice=="1") location.href="respiratory.html";
+  if(choice=="2") location.href="dna.html";
+  if(choice=="3") location.href="pulmonary.html";
 }
 
-/* ---------- INFO ---------- */
-function about(){
-sound();
-emoji("✨");
-alert("ARCADE uses Augmented Reality and interaction to make science learning engaging and immersive.");
-}
-
-function how(){
-sound();
-emoji("🧭");
-alert("Open lessons → View 3D → Tap AR → Listen → Submit reflection to earn points.");
-}
-
-/* ---------- TRIVIA ---------- */
+/* ---------- MANY TRIVIAS ---------- */
 const facts=[
-"Lungs contain 300 million alveoli.",
-"DNA length in one cell ≈ 2 meters!",
-"Heart pumps 7,500 liters daily.",
-"Visual learning improves memory.",
-"Blood circulates in about 60 seconds.",
-"Constellations helped ancient navigation.",
-"Neurons transmit signals electrically."
+"🫁 Lungs have 300 million air sacs!",
+"🧬 DNA fits inside every tiny cell.",
+"❤️ Your heart beats about 100,000 times daily.",
+"🌌 Some constellations are thousands of light years away.",
+"🧠 Visual learning improves memory retention.",
+"🩸 Blood completes circulation in about 1 minute.",
+"⚡ Neurons send signals faster than race cars!",
+"🌋 Volcano cones form differently based on eruption style.",
+"💨 You breathe about 20,000 times a day.",
+"🧬 Humans share 99.9% DNA with each other."
 ];
 
-function fact(){
-sound();
-emoji("⭐");
-alert(facts[Math.floor(Math.random()*facts.length)]);
+function funFact(){
+  playSound();
+  emojiBurst("⭐");
+  alert(facts[Math.floor(Math.random()*facts.length)]);
+}
+
+/* ---------- POINT SYSTEM ---------- */
+let points=localStorage.getItem("arcadePoints") || 0;
+document.getElementById("points").innerText=points;
+
+/* Achievement check */
+if(points>=30){
+  setTimeout(()=>{
+    emojiBurst("🎉");
+    alert("🏆 Achievement Unlocked: AR Explorer!");
+  },1000);
 }
 
 </script>
