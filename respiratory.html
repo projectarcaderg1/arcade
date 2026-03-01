@@ -1,76 +1,108 @@
 <!DOCTYPE html>
 <html>
 <head>
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta charset="UTF-8">
+<title>A.R.C.A.D.E</title>
 
-<title>A.R.C.A.D.E Respiratory</title>
+<meta name="viewport" content="width=device-width, initial-scale=1">
 
+<!-- AFRAME + MINDAR -->
 <script src="https://aframe.io/releases/1.4.2/aframe.min.js"></script>
-<script src="https://cdn.jsdelivr.net/npm/mind-ar@1.2.2/dist/mindar-image-aframe.prod.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/mind-ar@1.2.5/dist/mindar-image-aframe.prod.js"></script>
 
 <style>
 
-/* FULL CAMERA FIX */
-html, body{
-  margin:0;
-  height:100%;
-  overflow:hidden;
-  font-family:Arial;
-  background:black;
+body{
+margin:0;
+font-family:Arial;
+background:linear-gradient(135deg,#050522,#0a0033,#140044);
+color:white;
+overflow:hidden;
 }
 
+/* CAMERA FIX */
 a-scene{
-  position:fixed !important;
-  top:0;
-  left:0;
-  width:100%;
-  height:100%;
-  z-index:0;
+position:fixed !important;
+top:0;
+left:0;
+width:100%;
+height:100%;
+z-index:1;
 }
 
-/* UI ABOVE CAMERA */
-#ui{
-  position:fixed;
-  bottom:10px;
-  left:50%;
-  transform:translateX(-50%);
-  width:90%;
-  max-width:420px;
-  background:rgba(10,10,40,0.85);
-  padding:15px;
-  border-radius:15px;
-  text-align:center;
-  color:white;
-  z-index:10;   /* IMPORTANT */
+/* UI PANEL */
+.ui{
+position:fixed;
+bottom:0;
+width:100%;
+background:rgba(10,0,40,0.85);
+padding:15px;
+border-top:2px solid #7a5cff;
+z-index:2;
+text-align:center;
+backdrop-filter:blur(10px);
 }
 
+/* TITLE */
+h2{
+margin:5px;
+color:#9cf;
+text-shadow:0 0 10px #6cf,0 0 20px #a0f;
+}
+
+/* BUTTON STYLE */
 button{
-  padding:10px;
-  margin:6px;
-  border:none;
-  border-radius:10px;
-  background:linear-gradient(45deg,#3b82f6,#a855f7);
-  color:white;
-  font-size:16px;
+background:linear-gradient(45deg,#3a6cff,#a020f0);
+border:none;
+color:white;
+padding:10px 15px;
+margin:5px;
+border-radius:10px;
+font-size:14px;
+box-shadow:0 0 10px #7af;
+cursor:pointer;
 }
 
+/* INPUT */
 textarea{
-  width:95%;
-  height:70px;
-  border-radius:8px;
+width:90%;
+height:60px;
+border-radius:10px;
+border:none;
+padding:8px;
+margin-top:5px;
 }
 
-/* Confetti */
+/* POINTS */
+#points{
+font-size:18px;
+color:#7cffea;
+text-shadow:0 0 10px cyan;
+}
+
+/* LOADING SCREEN */
+#loading{
+position:fixed;
+top:50%;
+left:50%;
+transform:translate(-50%,-50%);
+background:#000a;
+padding:15px;
+border-radius:12px;
+z-index:5;
+}
+
 .emoji{
-  position:fixed;
-  font-size:28px;
-  animation:fly 1s forwards;
-  z-index:20;
+position:fixed;
+font-size:30px;
+animation:pop 1s ease forwards;
+pointer-events:none;
 }
 
-@keyframes fly{
-  from{transform:scale(0);}
-  to{transform:translateY(-140px) scale(1.5);opacity:0;}
+@keyframes pop{
+0%{transform:scale(0);}
+50%{transform:scale(1.5);}
+100%{transform:translateY(-120px);opacity:0;}
 }
 
 </style>
@@ -78,86 +110,83 @@ textarea{
 
 <body>
 
+<div id="loading">🔬 Loading AR Experience...</div>
+
 <!-- AR SCENE -->
 <a-scene
- mindar-image="imageTargetSrc: targets/respiratory.mind;"
- vr-mode-ui="enabled:false"
- device-orientation-permission-ui="enabled:true"
- renderer="colorManagement:true">
+mindar-image="imageTargetSrc: targets/respiratory.mind;"
+vr-mode-ui="enabled:false"
+device-orientation-permission-ui="enabled:false"
+renderer="colorManagement:true">
 
-<a-assets>
-<a-asset-item id="respModel"
-src="models/respiratory-optimized.glb"
-</a-asset-item>
-</a-assets>
-
-<a-light type="ambient" intensity="1"></a-light>
-<a-light type="directional" position="0 2 1"></a-light>
+<a-camera position="0 0 0" look-controls="enabled:false"></a-camera>
 
 <a-entity mindar-image-target="targetIndex:0">
 
 <a-gltf-model
-src="#respModel"
+src="models/respiratory-optimized.glb"
 position="0 0 0"
-scale="0.2 0.2 0.2"
-rotation="0 0 0"
-animation="property: rotation; to:0 360 0; loop:true; dur:15000">
+scale="0.02 0.02 0.02"
+rotation="0 180 0"
+animation="property: rotation; to: 0 360 0; loop: true; dur: 15000">
 </a-gltf-model>
 
 </a-entity>
-
-<a-camera position="0 0 0" look-controls="enabled:false"></a-camera>
-
 </a-scene>
 
 <!-- UI -->
-<div id="ui">
+<div class="ui">
+
+<h2>🫁 Respiratory System</h2>
 
 <div id="points">Points: 0 ⭐</div>
 
-<button id="listenBtn">🔊 Listen Lesson</button>
-<button id="submitBtn">✅ Submit</button>
+<button onclick="listenLesson()">🔊 Listen</button>
 
-<p>Reflection:</p>
-<textarea id="reflection"></textarea>
+<br>
+
+<textarea id="reflection"
+placeholder="What did you learn?"></textarea>
+
+<br>
+
+<button onclick="submitReflection()">Submit Reflection</button>
 
 </div>
 
 <script>
 
 let points=0;
-let listened=false;
 
-/* LISTEN BUTTON FIX */
-document.getElementById("listenBtn").onclick=function(){
+/* REMOVE LOADING WHEN READY */
+document.querySelector("a-scene")
+.addEventListener("loaded",()=>{
+document.getElementById("loading").style.display="none";
+});
 
-const speech=new SpeechSynthesisUtterance(
-"The respiratory system allows us to breathe. Oxygen enters the lungs and carbon dioxide leaves the body."
-);
+/* LESSON TEXT */
+const lessonText =
+"The respiratory system helps the body breathe. " +
+"It allows oxygen to enter the lungs and carbon dioxide to leave the body. " +
+"Main parts include the nose, trachea, lungs, and diaphragm.";
 
+/* LISTEN BUTTON */
+function listenLesson(){
+const speech=new SpeechSynthesisUtterance(lessonText);
 speech.rate=0.9;
-speech.pitch=1.1;
-
-speechSynthesis.cancel();
+speech.pitch=1;
+speech.lang="en-US";
 speechSynthesis.speak(speech);
-
-listened=true;
 emojiBurst();
-};
+}
 
-
-/* SUBMIT BUTTON */
-document.getElementById("submitBtn").onclick=function(){
+/* SUBMIT REFLECTION */
+function submitReflection(){
 
 const text=document.getElementById("reflection").value;
 
-if(!listened){
-alert("Listen to the lesson first.");
-return;
-}
-
-if(text.length<5){
-alert("Write a longer reflection.");
+if(text.trim()===""){
+alert("Write your reflection first!");
 return;
 }
 
@@ -165,29 +194,31 @@ points+=10;
 document.getElementById("points").innerText=
 "Points: "+points+" ⭐";
 
-emojiBurst(true);
-};
+emojiBurst();
 
+if(points>=10){
+confettiExplosion();
+}
+}
 
-/* CONFETTI */
-function emojiBurst(big=false){
-
-const emojis=big?
-["🎉","✨","⭐","🚀","🌟","💫"]:
-["✨","⭐"];
-
-for(let i=0;i<(big?25:6);i++){
-
+/* SMALL EMOJI POP */
+function emojiBurst(){
+const emojis=["✨","🎉","⭐","💫","🧠"];
+for(let i=0;i<6;i++){
 const e=document.createElement("div");
 e.className="emoji";
 e.innerText=emojis[Math.floor(Math.random()*emojis.length)];
-
-e.style.left=Math.random()*window.innerWidth+"px";
-e.style.top=window.innerHeight+"px";
-
+e.style.left=Math.random()*100+"vw";
+e.style.top="80vh";
 document.body.appendChild(e);
-
 setTimeout(()=>e.remove(),1000);
+}
+}
+
+/* BIG CELEBRATION */
+function confettiExplosion(){
+for(let i=0;i<25;i++){
+setTimeout(emojiBurst,i*80);
 }
 }
 
