@@ -4,54 +4,204 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>ARCADE Activities</title>
 
+<link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@500&display=swap" rel="stylesheet">
+
 <style>
+
+/* BACKGROUND SAME AS MAIN PAGE */
 body{
-font-family:Arial;
-background:#020014;
+margin:0;
+font-family:'Orbitron',sans-serif;
 color:white;
 text-align:center;
-padding:20px;
+background:url("background.png") center/cover no-repeat fixed;
 }
 
-.question{
-margin:20px;
-padding:15px;
-background:#0b0033;
-border-radius:10px;
+/* DARK FOG */
+body::before{
+content:"";
+position:fixed;
+width:100%;
+height:100%;
+background:linear-gradient(rgba(0,10,40,.8),rgba(10,0,50,.9));
+z-index:-1;
 }
 
-button{
-padding:10px 15px;
-margin-top:10px;
-background:#7a00ff;
-color:white;
+h1{
+margin-top:20px;
+text-shadow:0 0 15px #00e1ff,0 0 30px #7a00ff;
+}
+
+/* BUTTON STYLE */
+.arcade-btn{
+margin:10px;
+padding:14px;
+width:260px;
+font-size:16px;
 border:none;
-border-radius:8px;
+border-radius:12px;
+color:white;
+background:linear-gradient(45deg,#00c3ff,#7a00ff);
+box-shadow:0 0 15px #7a00ff;
 }
+
+.questionBox{
+margin:20px auto;
+width:90%;
+max-width:500px;
+background:#0b0033;
+padding:20px;
+border-radius:15px;
+box-shadow:0 0 20px #7a00ff;
+}
+
+/* EMOJI RAIN */
+.emoji{
+position:fixed;
+font-size:24px;
+animation:fall 2s linear forwards;
+pointer-events:none;
+}
+
+@keyframes fall{
+0%{opacity:1; transform:translateY(-50px);}
+100%{opacity:0; transform:translateY(100vh);}
+}
+
 </style>
 </head>
 
 <body>
 
-<h2>📝 Activity Questions</h2>
+<h1>📝 ARCADE Activity Center</h1>
 
-<div class="question">
-<h3>Respiratory System</h3>
-<p>What organ allows oxygen into the body?</p>
-<input id="q1">
-<button onclick="check()">Submit</button>
+<div id="menu">
+<button class="arcade-btn" onclick="startTopic('resp')">🫁 Respiratory System</button><br>
+<button class="arcade-btn" onclick="startTopic('dna')">🧬 DNA Double Helix</button><br>
+<button class="arcade-btn" onclick="startTopic('pulmo')">🫀 Pulmonary Circulation</button>
 </div>
 
-<p id="score">Points: 0</p>
+<div id="quizArea"></div>
+
+<h2 id="score">Points: 0</h2>
 
 <script>
+
+/* ================= SCORE ================= */
 let points=0;
 
-function check(){
-points+=10;
+function updateScore(){
 document.getElementById("score").innerText="Points: "+points;
-alert("🎉 Great job! +10 points");
 }
+
+/* ================= EMOJI CELEBRATION ================= */
+function emojiRain(){
+const emojis=["🎉","✨","⭐","💥","🚀","🎊"];
+
+for(let i=0;i<35;i++){
+const e=document.createElement("div");
+e.className="emoji";
+e.innerText=emojis[Math.floor(Math.random()*emojis.length)];
+
+e.style.left=Math.random()*window.innerWidth+"px";
+document.body.appendChild(e);
+
+setTimeout(()=>e.remove(),2000);
+}
+}
+
+/* ================= QUESTIONS ================= */
+
+const questions={
+
+resp:[
+["Which organ helps you breathe?","Heart","Lungs","Brain","Kidney","B"],
+["Air enters through the?","Nose","Stomach","Leg","Skin","A"],
+["Gas exchange happens in?","Alveoli","Veins","Bones","Muscles","A"],
+["Breathing in is called?","Exhale","Inhale","Digest","Pump","B"],
+["Oxygen moves into?","Blood","Hair","Nails","Teeth","A"],
+["The diaphragm helps?","Breathing","Thinking","Walking","Eating","A"],
+["Carbon dioxide leaves during?","Inhale","Exhale","Sleep","Run","B"],
+["Respiratory system works with?","Circulatory","Digestive","Skeletal","None","A"],
+["Main breathing muscle?","Diaphragm","Arm","Foot","Back","A"],
+["Function of lungs?","Pump blood","Exchange gases","Digest food","Store water","B"]
+],
+
+dna:[
+["DNA stands for?","Deoxyribonucleic Acid","Digital Network","Data Node","None","A"],
+["Shape of DNA?","Circle","Double Helix","Square","Triangle","B"],
+["DNA found in?","Nucleus","Skin","Hair","Air","A"],
+["DNA carries?","Energy","Genetic info","Water","Heat","B"],
+["DNA made of?","Nucleotides","Cells","Bones","Organs","A"],
+["Genes are part of?","DNA","Lungs","Blood","Brain","A"],
+["DNA controls?","Traits","Weather","Sound","Light","A"],
+["Humans share about?","10% DNA","50%","99.9%","0%","C"],
+["DNA looks like a?","Twisted ladder","Ball","Cube","Line","A"],
+["DNA helps in?","Growth","Cooking","Running","Sleeping","A"]
+],
+
+pulmo:[
+["Pulmonary circulation connects?","Heart & lungs","Brain & legs","Skin & bones","Eyes & ears","A"],
+["Blood goes to lungs to get?","Oxygen","Sugar","Water","Heat","A"],
+["Blood leaving lungs is?","Oxygenated","Dirty","Cold","Dry","A"],
+["Pulmonary artery carries?","Deoxygenated blood","Food","Air","Water","A"],
+["Pulmonary vein carries?","Oxygenated blood","CO2","Waste","Fat","A"],
+["Gas exchange happens in?","Lungs","Hands","Feet","Eyes","A"],
+["Heart chamber sending blood to lungs?","Right ventricle","Left arm","Brain","Kidney","A"],
+["Pulmonary means?","Related to lungs","Bones","Food","Energy","A"],
+["Blood returns to?","Heart","Skin","Muscle","Hair","A"],
+["Purpose of pulmonary circulation?","Oxygenate blood","Digest food","Move bones","Think","A"]
+]
+
+};
+
+/* ================= QUIZ ENGINE ================= */
+
+let currentTopic=[];
+let index=0;
+
+function startTopic(topic){
+document.getElementById("menu").style.display="none";
+currentTopic=questions[topic];
+index=0;
+showQuestion();
+}
+
+function showQuestion(){
+
+if(index>=currentTopic.length){
+document.getElementById("quizArea").innerHTML=
+"<h2>✅ Topic Finished!</h2><button class='arcade-btn' onclick='location.reload()'>Back to Topics</button>";
+return;
+}
+
+let q=currentTopic[index];
+
+document.getElementById("quizArea").innerHTML=`
+<div class="questionBox">
+<h3>${q[0]}</h3>
+
+<button class="arcade-btn" onclick="answer('A')">A. ${q[1]}</button><br>
+<button class="arcade-btn" onclick="answer('B')">B. ${q[2]}</button><br>
+<button class="arcade-btn" onclick="answer('C')">C. ${q[3]}</button><br>
+<button class="arcade-btn" onclick="answer('D')">D. ${q[4]}</button>
+</div>
+`;
+}
+
+function answer(choice){
+let correct=currentTopic[index][5];
+
+if(choice===correct){
+points+=10;
+updateScore();
+emojiRain();
+}
+
+index++;
+showQuestion();
+}
+
 </script>
 
 </body>
