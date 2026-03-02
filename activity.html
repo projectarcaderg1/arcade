@@ -6,91 +6,88 @@
 <title>ARCADE - Activity</title>
 
 <style>
-
-/* ---------- BACKGROUND ---------- */
-body{
-margin:0;
-font-family:Arial, sans-serif;
-color:white;
-text-align:center;
-
-background:
-linear-gradient(rgba(5,15,40,.85),rgba(5,15,40,.9)),
-url("background.png");
-background-size:cover;
-background-position:center;
+body {
+  margin:0;
+  font-family:Arial, sans-serif;
+  color:white;
+  text-align:center;
+  background:
+    linear-gradient(rgba(0,0,50,0.8),rgba(0,0,70,0.9)),
+    url("background.png") no-repeat center center fixed;
+  background-size:cover;
 }
 
-/* LIGHTWEIGHT ORBS (NO LAG) */
-body::before{
-content:"";
-position:fixed;
-width:100%;
-height:100%;
-background:
-radial-gradient(circle at 20% 30%, rgba(79,195,247,.15) 0 3px, transparent 4px),
-radial-gradient(circle at 80% 60%, rgba(79,195,247,.15) 0 3px, transparent 4px);
-animation:float 18s linear infinite;
+/* ---------- LIGHTWEIGHT ORBS ---------- */
+body::before {
+  content:"";
+  position:fixed;
+  width:100%;
+  height:100%;
+  background:
+    radial-gradient(circle at 20% 30%, rgba(79,195,247,.15) 0 3px, transparent 4px),
+    radial-gradient(circle at 80% 60%, rgba(200,100,255,.15) 0 3px, transparent 4px);
+  animation:float 18s linear infinite;
 }
 
-@keyframes float{
-from{transform:translateY(0);}
-to{transform:translateY(-60px);}
+@keyframes float {
+  from { transform: translateY(0); }
+  to { transform: translateY(-50px); }
 }
 
-/* ---------- LAYOUT ---------- */
-.container{
-max-width:650px;
-margin:auto;
-padding:20px;
+/* ---------- CONTAINER ---------- */
+.container {
+  max-width:650px;
+  margin:auto;
+  padding:20px;
 }
 
 /* ---------- BUTTONS ---------- */
-button{
-width:100%;
-padding:14px;
-margin:8px 0;
-border:none;
-border-radius:12px;
-font-size:16px;
-font-weight:bold;
-background:#00c3ff;
-color:white;
-cursor:pointer;
-transition:.2s;
+button {
+  width:100%;
+  padding:15px;
+  margin:10px 0;
+  border:none;
+  border-radius:12px;
+  font-size:16px;
+  font-weight:bold;
+  cursor:pointer;
+  color:white;
+  text-shadow:0 0 5px #fff,0 0 10px #00f,0 0 20px #8e2de2;
+  background:#1a1a2e;
+  transition:.3s;
 }
 
-button:active{
-transform:scale(.96);
-background:#0099cc;
+button:hover {
+  background:#27293d;
+  text-shadow:0 0 10px #fff,0 0 20px #00f,0 0 30px #8e2de2;
+  transform:scale(1.03);
 }
 
-.card{
-background:rgba(0,0,0,.55);
-padding:18px;
-border-radius:15px;
-margin-top:15px;
+/* ---------- CARD ---------- */
+.card {
+  background:rgba(0,0,0,0.55);
+  padding:18px;
+  border-radius:15px;
+  margin-top:15px;
 }
 
 /* ---------- EMOJI ---------- */
-.emoji{
-position:fixed;
-font-size:22px;
-animation:fall 1.6s linear forwards;
+.emoji {
+  position:fixed;
+  font-size:22px;
+  animation:fall 1.6s linear forwards;
 }
 
-@keyframes fall{
-from{transform:translateY(-40px);}
-to{transform:translateY(105vh);}
+@keyframes fall {
+  from{transform:translateY(-40px);}
+  to{transform:translateY(105vh);}
 }
-
 </style>
 </head>
 
 <body>
 
 <div class="container">
-
 <h1>🎮 ARCADE Activities</h1>
 <p><b>Select a topic:</b></p>
 
@@ -102,22 +99,16 @@ to{transform:translateY(105vh);}
 
 <div id="quiz"></div>
 <div id="score"></div>
-
 </div>
 
-<!-- ✅ LOCAL AUDIO (FAST + WORKING) -->
-<audio id="clickSound" preload="auto" src="click.mp3"></audio>
+<!-- ONLY CORRECT / WRONG SOUNDS -->
 <audio id="correctSound" preload="auto" src="correct.mp3"></audio>
 <audio id="wrongSound" preload="auto" src="wrong.mp3"></audio>
 
 <script>
-
-/* ---------- QUESTIONS ---------- */
-
-const quizzes={
-
+const quizzes = {
 resp:[
-{q:"What organ helps you breathe?",o:["Heart","Lungs","Brain","Kidney"],a:1},
+{q:"Which organ helps you breathe?",o:["Heart","Lungs","Brain","Kidney"],a:1},
 {q:"Air enters through?",o:["Nose","Skin","Leg","Hand"],a:0},
 {q:"Gas needed by body?",o:["Oxygen","Smoke","Dust","Salt"],a:0},
 {q:"Breathing out removes?",o:["Carbon dioxide","Water","Food","Oxygen"],a:0},
@@ -128,7 +119,6 @@ resp:[
 {q:"Healthy lungs need?",o:["Exercise","Smoke","Dust","Trash"],a:0},
 {q:"Air tubes inside lungs?",o:["Bronchi","Veins","Skin","Ribs"],a:0}
 ],
-
 dna:[
 {q:"DNA shape?",o:["Double helix","Square","Circle","Flat"],a:0},
 {q:"DNA stores?",o:["Genetic info","Food","Water","Air"],a:0},
@@ -141,7 +131,6 @@ dna:[
 {q:"Shape looks like?",o:["Twisted ladder","Cube","Line","Dot"],a:0},
 {q:"DNA inside?",o:["Cells","Shoes","Air","Water"],a:0}
 ],
-
 pulmo:[
 {q:"Pulmonary circulation connects?",o:["Heart & lungs","Brain & legs","Eyes & ears","Skin & bones"],a:0},
 {q:"Blood goes to lungs for?",o:["Oxygen","Sugar","Salt","Water"],a:0},
@@ -151,39 +140,31 @@ pulmo:[
 {q:"Gas exchange happens in?",o:["Alveoli","Bones","Skin","Brain"],a:0},
 {q:"Main pump organ?",o:["Heart","Eye","Muscle","Lung"],a:0},
 {q:"After oxygen blood becomes?",o:["Bright red","Blue","Green","Black"],a:0},
-{q:"Circulation means?",o:["Blood movement","Eating","Sleeping","Talking"],a:0},
 {q:"Works with lungs?",o:["Circulatory system","Digestive","Skeletal","Nervous"],a:0}
 ]
-
 };
 
 let quiz=[],index=0,score=0;
 
-/* ---------- SOUND SAFE PLAY ---------- */
 function play(id){
 const s=document.getElementById(id);
 s.currentTime=0;
 s.play().catch(()=>{});
 }
 
-/* ---------- START ---------- */
 function startQuiz(topic){
-play("clickSound");
-document.getElementById("menu").style.display="none";
 quiz=quizzes[topic];
 index=0;
 score=0;
+document.getElementById("menu").style.display="none";
 show();
 }
 
-/* ---------- SHOW QUESTION ---------- */
 function show(){
-
 if(index>=quiz.length){
 document.getElementById("quiz").innerHTML="";
 document.getElementById("score").innerHTML=
-`🏆 Score: ${score}/10<br><br>
-<button onclick="location.reload()">Back</button>`;
+`🏆 Score: ${score}/10<br><br><button onclick="location.reload()">Back</button>`;
 return;
 }
 
@@ -198,9 +179,7 @@ html+="</div>";
 document.getElementById("quiz").innerHTML=html;
 }
 
-/* ---------- ANSWER ---------- */
 function answer(c){
-
 if(c===quiz[index].a){
 score++;
 play("correctSound");
@@ -208,14 +187,12 @@ emojiBurst();
 }else{
 play("wrongSound");
 }
-
 index++;
 show();
 }
 
-/* ---------- LIGHT EMOJI (NO LAG) ---------- */
 function emojiBurst(){
-for(let i=0;i<12;i++){
+for(let i=0;i<10;i++){ // lightweight
 let e=document.createElement("div");
 e.className="emoji";
 e.innerText=["🎉","⭐","✨","🥳"][Math.floor(Math.random()*4)];
