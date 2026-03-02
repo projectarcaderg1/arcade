@@ -1,176 +1,257 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
-<title>ARCADE Activities</title>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>ARCADE - Activity</title>
 
 <style>
-body {
-    margin: 0;
-    font-family: Arial;
-    background: url('background.png') no-repeat center center fixed;
-    background-size: cover;
+
+/* ---------- BACKGROUND ---------- */
+body{
+  margin:0;
+  font-family:Arial, Helvetica, sans-serif;
+  color:white;
+  text-align:center;
+
+  background:
+    linear-gradient(rgba(5,15,40,0.85),rgba(5,15,40,0.9)),
+    url("background.png");
+  background-size:cover;
+  background-position:center;
 }
 
-.overlay {
-    background: rgba(0,20,60,0.85);
-    min-height: 100vh;
-    padding: 40px;
-    text-align: center;
-    color: white;
+/* moving orbs */
+body::before{
+  content:"";
+  position:fixed;
+  width:200%;
+  height:200%;
+  background:
+    radial-gradient(circle,#4fc3f7 2px,transparent 3px);
+  animation:move 30s linear infinite;
+  opacity:.2;
 }
 
-.button {
-    display: block;
-    margin: 15px auto;
-    padding: 12px;
-    width: 260px;
-    background: #00bfff;
-    color: white;
-    font-size: 16px;
-    border-radius: 10px;
-    cursor: pointer;
+@keyframes move{
+  from{transform:translate(0,0);}
+  to{transform:translate(-400px,-400px);}
 }
 
-.button:hover {
-    background: #0080ff;
+/* ---------- CONTAINER ---------- */
+.container{
+  max-width:700px;
+  margin:auto;
+  padding:20px;
 }
 
-.choice {
-    display: block;
-    margin: 10px auto;
-    padding: 10px;
-    width: 300px;
-    background: white;
-    color: black;
-    border-radius: 8px;
-    cursor: pointer;
+/* ---------- BUTTONS ---------- */
+button{
+  width:100%;
+  padding:15px;
+  margin:10px 0;
+  border:none;
+  border-radius:12px;
+  font-size:16px;
+  font-weight:bold;
+  background:#00c3ff;
+  color:white;
+  cursor:pointer;
+  transition:.3s;
 }
 
-.choice:hover {
-    background: #ddd;
+button:hover{
+  background:#0099cc;
+  transform:scale(1.03);
 }
 
-.emoji {
-    position: fixed;
-    font-size: 24px;
-    animation: fall 3s linear forwards;
+/* ---------- QUESTION CARD ---------- */
+.card{
+  background:rgba(0,0,0,0.55);
+  padding:20px;
+  border-radius:15px;
+  margin-top:15px;
 }
 
-@keyframes fall {
-    from { top: -10%; }
-    to { top: 110%; }
+.option{
+  background:#1e88e5;
 }
+
+.option:hover{
+  background:#1565c0;
+}
+
+/* ---------- SCORE ---------- */
+#score{
+  font-size:20px;
+  margin-top:15px;
+}
+
+/* ---------- EMOJIS ---------- */
+.emoji{
+  position:fixed;
+  font-size:24px;
+  animation:fall 2.5s linear forwards;
+}
+
+@keyframes fall{
+  from{transform:translateY(-50px);}
+  to{transform:translateY(110vh);}
+}
+
 </style>
 </head>
 
 <body>
 
-<div class="overlay">
+<div class="container">
 
-<h2>Select Topic</h2>
+<h1>🎮 ARCADE Activities</h1>
+<p>Select a topic to answer:</p>
 
-<div class="button" onclick="startQuiz('dna')">DNA Structure (25 Items)</div>
-<div class="button" onclick="startQuiz('circulatory')">Circulatory System (25 Items)</div>
-<div class="button" onclick="startQuiz('pulmonary')">Pulmonary Circulation (25 Items)</div>
+<div id="menu">
+<button onclick="startQuiz('resp')">🫁 Respiratory System</button>
+<button onclick="startQuiz('dna')">🧬 DNA Double Helix</button>
+<button onclick="startQuiz('pulmo')">❤️ Pulmonary Circulation</button>
+</div>
 
-<div id="quizArea"></div>
+<div id="quiz"></div>
+<div id="score"></div>
 
 </div>
 
-<audio id="clickSound" src="click.mp3"></audio>
-<audio id="correctSound" src="correct.mp3"></audio>
-<audio id="wrongSound" src="wrong.mp3"></audio>
+<!-- SOUNDS -->
+<audio id="clickSound" src="https://cdn.pixabay.com/audio/2022/03/15/audio_click.mp3"></audio>
+<audio id="correctSound" src="https://cdn.pixabay.com/audio/2022/03/10/audio_correct.mp3"></audio>
+<audio id="wrongSound" src="https://cdn.pixabay.com/audio/2022/03/10/audio_error.mp3"></audio>
 
 <script>
 
-let current = 0;
-let questions = [];
+/* ---------- QUESTIONS ---------- */
 
-const quizData = {
-dna: [],
-circulatory: [],
-pulmonary: []
+const quizzes = {
+
+resp:[
+{q:"What organ allows breathing?",o:["Heart","Lungs","Brain","Kidney"],a:1},
+{q:"Air enters through the?",o:["Nose","Stomach","Skin","Leg"],a:0},
+{q:"Gas taken by body?",o:["Carbon dioxide","Oxygen","Nitrogen","Hydrogen"],a:1},
+{q:"Breathing out removes?",o:["Oxygen","Carbon dioxide","Water","Food"],a:1},
+{q:"Windpipe is called?",o:["Trachea","Esophagus","Vein","Nerve"],a:0},
+{q:"Tiny air sacs?",o:["Alveoli","Cells","Bones","Muscles"],a:0},
+{q:"Breathing muscle?",o:["Diaphragm","Biceps","Skull","Rib"],a:0},
+{q:"System for breathing?",o:["Digestive","Respiratory","Nervous","Circulatory"],a:1},
+{q:"Good lung habit?",o:["Smoking","Exercise","Pollution","Dust"],a:1},
+{q:"Air goes to lungs through?",o:["Bronchi","Veins","Arteries","Skin"],a:0}
+],
+
+dna:[
+{q:"DNA shape?",o:["Circle","Double helix","Square","Flat"],a:1},
+{q:"DNA carries?",o:["Food","Genes","Air","Water"],a:1},
+{q:"DNA found in?",o:["Nucleus","Foot","Hair","Blood only"],a:0},
+{q:"DNA letters?",o:["ABCD","ATCG","WXYZ","EFGH"],a:1},
+{q:"DNA controls?",o:["Weather","Traits","Sound","Light"],a:1},
+{q:"Unit of DNA?",o:["Gene","Bone","Cell wall","Organ"],a:0},
+{q:"DNA inherited from?",o:["Friends","Parents","Teacher","Food"],a:1},
+{q:"DNA makes?",o:["Proteins","Rocks","Sand","Clouds"],a:0},
+{q:"Twisted ladder look?",o:["Helix","Cube","Line","Dot"],a:0},
+{q:"DNA is inside?",o:["Cells","Shoes","Water","Air"],a:0}
+],
+
+pulmo:[
+{q:"Pulmonary circulation connects?",o:["Heart & lungs","Brain & legs","Skin & bones","Eyes & ears"],a:0},
+{q:"Blood goes to lungs to get?",o:["Sugar","Oxygen","Salt","Water"],a:1},
+{q:"Blood returns to?",o:["Heart","Kidney","Liver","Foot"],a:0},
+{q:"Pulmonary artery carries?",o:["Oxygen-rich","Oxygen-poor","Food","Waste"],a:1},
+{q:"Pulmonary vein carries?",o:["Oxygen-rich","Dirty blood","Air","Water"],a:0},
+{q:"Gas exchange happens in?",o:["Alveoli","Bones","Skin","Brain"],a:0},
+{q:"Main pump organ?",o:["Heart","Lung","Muscle","Eye"],a:0},
+{q:"Blood color after oxygen?",o:["Bright red","Blue","Green","Black"],a:0},
+{q:"Circulation means?",o:["Movement of blood","Eating","Sleeping","Talking"],a:0},
+{q:"System working with lungs?",o:["Circulatory","Digestive","Skeletal","Nervous"],a:0}
+]
+
 };
 
-// Auto-generate 25 easy-medium questions per topic
-for(let i=1;i<=25;i++){
-quizData.dna.push({
-q: "DNA is mainly found in?",
-a:"Nucleus",
-b:"Lungs",
-c:"Heart",
-d:"Skin",
-correct:"a"
-});
+let currentQuiz=[];
+let index=0;
+let score=0;
 
-quizData.circulatory.push({
-q:"The heart pumps?",
-a:"Air",
-b:"Blood",
-c:"Water",
-d:"Oxygen only",
-correct:"b"
-});
-
-quizData.pulmonary.push({
-q:"Pulmonary circulation connects heart and?",
-a:"Brain",
-b:"Lungs",
-c:"Kidneys",
-d:"Stomach",
-correct:"b"
-});
-}
-
-function playClick(){
-document.getElementById("clickSound").play();
-}
-
+/* ---------- START QUIZ ---------- */
 function startQuiz(topic){
 playClick();
-questions = quizData[topic];
-current = 0;
+document.getElementById("menu").style.display="none";
+currentQuiz=quizzes[topic];
+index=0;
+score=0;
 showQuestion();
 }
 
+/* ---------- SHOW QUESTION ---------- */
 function showQuestion(){
-if(current >= questions.length){
-document.getElementById("quizArea").innerHTML="<h3>Topic Finished!</h3>";
+
+if(index>=currentQuiz.length){
+document.getElementById("quiz").innerHTML="";
+document.getElementById("score").innerHTML=
+`🏆 Score: ${score}/10 <br><br>
+<button onclick="location.reload()">Back to Topics</button>`;
 return;
 }
 
-let q = questions[current];
+let q=currentQuiz[index];
 
-document.getElementById("quizArea").innerHTML = `
-<h3>${current+1}. ${q.q}</h3>
-<div class="choice" onclick="checkAnswer('a')">A. ${q.a}</div>
-<div class="choice" onclick="checkAnswer('b')">B. ${q.b}</div>
-<div class="choice" onclick="checkAnswer('c')">C. ${q.c}</div>
-<div class="choice" onclick="checkAnswer('d')">D. ${q.d}</div>
-`;
-}
+let html=`<div class="card">
+<h3>${index+1}. ${q.q}</h3>`;
 
-function checkAnswer(choice){
-playClick();
-if(choice === questions[current].correct){
-document.getElementById("correctSound").play();
-celebrate();
-} else {
-document.getElementById("wrongSound").play();
-}
-current++;
-setTimeout(showQuestion,800);
+q.o.forEach((opt,i)=>{
+html+=`<button class="option" onclick="answer(${i})">${opt}</button>`;
+});
+
+html+="</div>";
+
+document.getElementById("quiz").innerHTML=html;
 }
 
-function celebrate(){
-for(let i=0;i<40;i++){
-let emoji = document.createElement("div");
-emoji.className="emoji";
-emoji.innerHTML="🎉✨🎊💙⭐"[Math.floor(Math.random()*6)];
-emoji.style.left=Math.random()*100+"%";
-document.body.appendChild(emoji);
-setTimeout(()=>emoji.remove(),3000);
+/* ---------- ANSWER ---------- */
+function answer(choice){
+
+if(choice===currentQuiz[index].a){
+score++;
+playCorrect();
+emojiRain();
+}else{
+playWrong();
 }
+
+index++;
+showQuestion();
+}
+
+/* ---------- EMOJI CELEBRATION ---------- */
+function emojiRain(){
+for(let i=0;i<25;i++){
+let e=document.createElement("div");
+e.className="emoji";
+e.innerText=["🎉","✨","🥳","⭐","🎊"][Math.floor(Math.random()*5)];
+e.style.left=Math.random()*100+"vw";
+document.body.appendChild(e);
+setTimeout(()=>e.remove(),2500);
+}
+}
+
+/* ---------- SOUND FIX (IMPORTANT) ---------- */
+function playClick(){
+document.getElementById("clickSound").currentTime=0;
+document.getElementById("clickSound").play().catch(()=>{});
+}
+
+function playCorrect(){
+document.getElementById("correctSound").currentTime=0;
+document.getElementById("correctSound").play().catch(()=>{});
+}
+
+function playWrong(){
+document.getElementById("wrongSound").currentTime=0;
+document.getElementById("wrongSound").play().catch(()=>{});
 }
 
 </script>
