@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>ARCADE Activities</title>
+
+<style>
+body{
+font-family:Arial;
+background:#020014;
+color:white;
+text-align:center;
+padding:20px;
+}
+
+.question{
+margin:20px;
+padding:15px;
+background:#0b0033;
+border-radius:10px;
+}
+
+button{
+padding:10px 15px;
+margin-top:10px;
+background:#7a00ff;
+color:white;
+border:none;
+border-radius:8px;
+}
+</style>
+</head>
+
+<body>
+
+<h2>📝 Activity Questions</h2>
+
+<div class="question">
+<h3>Respiratory System</h3>
+<p>What organ allows oxygen into the body?</p>
+<input id="q1">
+<button onclick="check()">Submit</button>
+</div>
+
+<p id="score">Points: 0</p>
+
+<script>
+let points=0;
+
+function check(){
+points+=10;
+document.getElementById("score").innerText="Points: "+points;
+alert("🎉 Great job! +10 points");
+}
+</script>
+
+</body>
+</html>
