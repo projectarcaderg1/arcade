@@ -182,40 +182,52 @@ Use Samsung Internet or Safari.
 
 
 <script>
+<script>
 
-/* ---------- SOUND FIX (MOBILE SAFE) ---------- */
-let soundUnlocked=false;
-let soundOn=true;
+/* =========================
+   MOBILE SAFE SOUND SYSTEM
+========================= */
 
-const clickSound=new Audio(
+let soundEnabled = true;
+let audioUnlocked = false;
+
+const clickSound = new Audio(
 "https://cdn.pixabay.com/download/audio/2022/03/15/audio_c8c8a73467.mp3"
 );
 
-document.body.addEventListener("click",()=>{
-  if(!soundUnlocked){
-    clickSound.play().then(()=>{
-      clickSound.pause();
-      clickSound.currentTime=0;
-      soundUnlocked=true;
-    }).catch(()=>{});
-  }
-},{once:true});
+clickSound.preload = "auto";
+
+/* unlock audio after FIRST tap */
+document.addEventListener("touchstart", unlockAudio, {once:true});
+document.addEventListener("click", unlockAudio, {once:true});
+
+function unlockAudio(){
+  clickSound.play().then(()=>{
+    clickSound.pause();
+    clickSound.currentTime = 0;
+    audioUnlocked = true;
+  }).catch(()=>{});
+}
 
 function playSound(){
-  if(soundOn && soundUnlocked){
-    clickSound.currentTime=0;
-    clickSound.play();
+  if(soundEnabled && audioUnlocked){
+    const s = clickSound.cloneNode(); // prevents delay
+    s.play();
   }
 }
 
 function toggleSound(){
-  soundOn=!soundOn;
+  soundEnabled = !soundEnabled;
   emojiBurst("🔊");
 }
 
-/* ---------- EMOJI EFFECT ---------- */
+
+/* =========================
+   EMOJI EFFECT
+========================= */
+
 function emojiBurst(icon="✨"){
-  for(let i=0;i<10;i++){
+  for(let i=0;i<12;i++){
     const e=document.createElement("div");
     e.className="emoji";
     e.innerText=icon;
@@ -228,7 +240,11 @@ function emojiBurst(icon="✨"){
   }
 }
 
-/* ---------- POPUPS ---------- */
+
+/* =========================
+   POPUPS
+========================= */
+
 function showPopup(id){
   playSound();
   emojiBurst("✨");
@@ -240,57 +256,45 @@ function closePopup(){
     .forEach(p=>p.classList.remove("active"));
 }
 
-/* ---------- LESSON LINKS ---------- */
+
+/* =========================
+   LESSON MENU (NO TYPING)
+========================= */
+
 function openLessons(){
   playSound();
-  emojiBurst("🚀");
+  emojiBurst("📚");
 
-  let choice = prompt(
-`📚 LESSON SELECTION 📚
-
-Enter the NUMBER of the lesson you want to open:
-
-1️⃣  Respiratory System
-2️⃣  DNA Double Helix
-3️⃣  Pulmonary Circulation
-
-⚠️ Type 1, 2, or 3 ONLY and press OK!`
-  );
-
-  // Trim and ensure valid input
-  if(choice) choice = choice.trim();
-
-  if(choice=="1"){
-    alert("🫁 Opening Respiratory System!");
-    location.href="respiratory.html";
-  }
-  else if(choice=="2"){
-    alert("🧬 Opening DNA Double Helix!");
-    location.href="dna.html";
-  }
-  else if(choice=="3"){
-    alert("🫀 Opening Pulmonary Circulation!");
-    location.href="pulmonary.html";
-  }
-  else{
-    alert("❌ Invalid choice! Please type 1, 2, or 3.");
-  }
+  document.getElementById("lessonMenu").classList.add("active");
 }
 
-/* ---------- MANY SCIENCE TRIVIA ---------- */
+function closeLessons(){
+  document.getElementById("lessonMenu").classList.remove("active");
+}
+
+function goLesson(page,emoji){
+  playSound();
+  emojiBurst(emoji);
+
+  setTimeout(()=>{
+    location.href = page;
+  },400);
+}
+
+
+/* =========================
+   TRIVIA SYSTEM
+========================= */
+
 const facts=[
-"🫁 Your lungs have about 300 million alveoli!",
-"🧬 DNA fits inside every tiny cell nucleus.",
-"❤️ Your heart beats about 100,000 times a day.",
-"🌌 Some constellations are over 1,000 light-years away.",
-"🧠 Visual learning improves memory retention.",
-"🫀 Blood travels lungs ↔ heart continuously.",
-"🧬 Humans share 99.9% DNA similarity.",
-"🌋 Volcano cones form differently based on lava type.",
-"💨 Breathing rate increases during exercise.",
-"🔬 A single DNA strand contains billions of instructions.",
-"⭐ Stars we see tonight may no longer exist!",
-"🫁 Oxygen moves into blood through diffusion."
+"🫁 Lungs contain about 300 million alveoli!",
+"🧬 DNA carries genetic instructions.",
+"🫀 Heart pumps blood nonstop.",
+"🌌 Some stars we see already disappeared.",
+"🔬 Visual learning improves memory.",
+"💨 Exercise increases breathing rate.",
+"⭐ Constellations helped ancient navigation.",
+"🧬 Humans share 99.9% DNA."
 ];
 
 function funFact(){
@@ -301,5 +305,27 @@ function funFact(){
 
 </script>
 
+  <div id="lessonMenu" class="popup">
+<h3>📚 Choose Your Lesson</h3>
+
+<button class="arcade-btn"
+onclick="goLesson('respiratory.html','🫁')">
+🫁 Respiratory System
+</button><br><br>
+
+<button class="arcade-btn"
+onclick="goLesson('dna.html','🧬')">
+🧬 DNA Double Helix
+</button><br><br>
+
+<button class="arcade-btn"
+onclick="goLesson('pulmonary.html','🫀')">
+🫀 Pulmonary Circulation
+</button>
+
+<br><br>
+<button class="close" onclick="closeLessons()">Close</button>
+</div>
+  
 </body>
 </html>
