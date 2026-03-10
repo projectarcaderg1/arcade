@@ -15,12 +15,12 @@ src="https://unpkg.com/@google/model-viewer/dist/model-viewer.min.js">
 
 body{
 margin:0;
-font-family:Arial,Helvetica,sans-serif;
-text-align:center;
+font-family:Arial, Helvetica, sans-serif;
 color:white;
+text-align:center;
 
 background:
-linear-gradient(rgba(0,20,60,0.75),rgba(0,10,40,0.85)),
+linear-gradient(rgba(0,20,60,0.75), rgba(0,10,40,0.85)),
 url("background.png");
 
 background-size:cover;
@@ -34,28 +34,23 @@ color:#9be7ff;
 text-shadow:0 0 10px #00bfff;
 }
 
-/* model viewer */
-
 model-viewer{
 width:100%;
 height:420px;
 background:transparent;
 }
 
-/* hint text */
-
 .hint{
 font-size:13px;
-opacity:0.8;
+opacity:0.85;
 margin-bottom:10px;
 }
-
-/* buttons */
 
 .button{
 
 margin:8px;
 padding:12px 20px;
+
 border:none;
 border-radius:10px;
 
@@ -72,8 +67,6 @@ box-shadow:0 0 10px rgba(100,100,255,0.7);
 transform:scale(1.05);
 }
 
-/* reflection */
-
 textarea{
 
 width:90%;
@@ -87,40 +80,12 @@ padding:10px;
 font-size:14px;
 }
 
-/* AR overlay */
-
-#arViewer{
-
-position:fixed;
-top:0;
-left:0;
-
-width:100%;
-height:100%;
-
-background:rgba(0,0,40,0.95);
-
-display:none;
-flex-direction:column;
-align-items:center;
-justify-content:center;
-
-z-index:1000;
-}
-
-#arViewer model-viewer{
-
-width:90%;
-height:70%;
-}
-
-/* emojis */
-
 .emoji{
 
 position:fixed;
 font-size:24px;
 animation:fall 3s linear forwards;
+
 }
 
 @keyframes fall{
@@ -138,11 +103,20 @@ animation:fall 3s linear forwards;
 <h1>Respiratory System</h1>
 
 <model-viewer
+
 src="models/respiratory2.glb"
+
 camera-controls
 auto-rotate
 shadow-intensity="1"
-exposure="1">
+exposure="1"
+
+ar
+ar-modes="webxr scene-viewer quick-look"
+
+scale="1 1 1"
+
+>
 
 </model-viewer>
 
@@ -150,16 +124,21 @@ exposure="1">
 Drag to rotate • Pinch to zoom
 </div>
 
-<button class="button" onclick="listenLesson()">🔊 Listen</button>
+<button class="button" onclick="startListening()">🔊 Listen</button>
 
-<button class="button" onclick="openAR()">📱 View in AR</button>
+<button class="button" onclick="stopListening()">⏹ Stop Listening</button>
+
+<button class="button"
+onclick="document.querySelector('model-viewer').activateAR()">
+📱 View in AR
+</button>
 
 <br><br>
 
 <h3>Reflection</h3>
 
 <textarea id="reflection"
-placeholder="Write what you learned...">
+placeholder="Write what you learned about the respiratory system...">
 </textarea>
 
 <br>
@@ -168,51 +147,32 @@ placeholder="Write what you learned...">
 Submit Reflection
 </button>
 
-<!-- AR POPUP -->
-
-<div id="arViewer">
-
-<h2>AR View</h2>
-
-<model-viewer
-src="models/respiratory2.glb"
-camera-controls
-auto-rotate
-shadow-intensity="1">
-</model-viewer>
-
-<br>
-
-<button class="button" onclick="closeAR()">
-Close AR
-</button>
-
-</div>
-
 <script>
 
-/* LISTEN EXPLANATION */
+/* SPEECH SYSTEM */
 
-function listenLesson(){
+let speech;
+
+function startListening(){
 
 let text = `
-The respiratory system helps the body breathe.
-It allows oxygen to enter the body and carbon dioxide to leave.
+The respiratory system allows the body to breathe.
+It supplies oxygen to the blood and removes carbon dioxide.
 
-Air enters through the nose or mouth, then travels through the trachea.
-The trachea branches into bronchi that lead to the lungs.
+Air enters the body through the nose or mouth and travels through the trachea.
+The trachea splits into two bronchi that lead into the lungs.
 
 Inside the lungs are tiny air sacs called alveoli.
-These alveoli allow oxygen to move into the blood
-and carbon dioxide to move out of the blood.
+These sacs allow oxygen to move into the bloodstream
+while carbon dioxide leaves the blood.
 
-The lungs expand when we breathe in
-and contract when we breathe out.
+When we breathe in, the lungs expand.
+When we breathe out, the lungs contract.
 
-This process is called breathing or respiration.
+This continuous process keeps the body supplied with oxygen.
 `;
 
-let speech = new SpeechSynthesisUtterance(text);
+speech = new SpeechSynthesisUtterance(text);
 
 speech.rate = 0.9;
 speech.pitch = 1;
@@ -221,17 +181,9 @@ speechSynthesis.speak(speech);
 
 }
 
-/* AR POPUP */
+function stopListening(){
 
-function openAR(){
-
-document.getElementById("arViewer").style.display="flex";
-
-}
-
-function closeAR(){
-
-document.getElementById("arViewer").style.display="none";
+speechSynthesis.cancel();
 
 }
 
@@ -258,7 +210,7 @@ function celebrate(){
 
 let emojis=["🎉","✨","🎊","👏","⭐","💙"];
 
-for(let i=0;i<35;i++){
+for(let i=0;i<40;i++){
 
 let e=document.createElement("div");
 
