@@ -1,148 +1,102 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-
-<title>ARCADE - Augmented Reality for Creative and Active Digital Education</title>
-
-<link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@600&display=swap" rel="stylesheet">
+<title>ARCADE - Activity</title>
 
 <style>
 
-/* BACKGROUND */
+/* ---------- BACKGROUND ---------- */
 body{
-margin:0;
-font-family:'Orbitron',sans-serif;
-color:white;
-text-align:center;
-overflow:hidden;
-background:url("background.png") center/cover no-repeat fixed;
+  margin:0;
+  font-family:Arial, Helvetica, sans-serif;
+  color:white;
+  text-align:center;
+
+  background:
+    linear-gradient(rgba(5,15,40,0.85),rgba(5,15,40,0.9)),
+    url("background.png");
+  background-size:cover;
+  background-position:center;
 }
 
-/* dark fog overlay */
+/* moving orbs */
 body::before{
-content:"";
-position:fixed;
-top:0;
-left:0;
-width:100%;
-height:100%;
-background:linear-gradient(
-rgba(0,10,40,.75),
-rgba(10,0,50,.85)
-);
-z-index:-2;
+  content:"";
+  position:fixed;
+  width:200%;
+  height:200%;
+  background:
+    radial-gradient(circle,#4fc3f7 2px,transparent 3px);
+  animation:move 30s linear infinite;
+  opacity:.2;
 }
 
-/* glowing orbs */
-.orb{
-position:fixed;
-border-radius:50%;
-filter:blur(40px);
-opacity:.5;
-animation:float 18s infinite alternate linear;
-z-index:-1;
+@keyframes move{
+  from{transform:translate(0,0);}
+  to{transform:translate(-400px,-400px);}
 }
 
-.orb1{
-width:200px;height:200px;
-background:#00e1ff;
-top:10%;left:5%;
-}
-
-.orb2{
-width:250px;height:250px;
-background:#7a00ff;
-bottom:10%;right:10%;
-animation-duration:22s;
-}
-
-@keyframes float{
-from{transform:translateY(0);}
-to{transform:translateY(-60px);}
-}
-
-/* TITLE */
-h1{
-margin-top:35px;
-font-size:2.2em;
-color:#7df9ff;
-text-shadow:
-0 0 10px #00f7ff,
-0 0 30px #7a00ff;
-}
-
-.subtitle{
-opacity:.85;
-margin-bottom:25px;
-}
-
-/* BUTTONS */
+/* ---------- CONTAINER ---------- */
 .container{
-display:flex;
-flex-direction:column;
-align-items:center;
-gap:18px;
+  max-width:700px;
+  margin:auto;
+  padding:20px;
 }
 
-.arcade-btn{
-width:270px;
-padding:15px;
-font-size:17px;
-border:none;
-border-radius:14px;
-cursor:pointer;
-color:white;
-background:linear-gradient(45deg,#00c3ff,#7a00ff);
-box-shadow:0 0 15px #7a00ff;
-transition:.25s;
+/* ---------- BUTTONS ---------- */
+button{
+  width:100%;
+  padding:15px;
+  margin:10px 0;
+  border:none;
+  border-radius:12px;
+  font-size:16px;
+  font-weight:bold;
+  background:#00c3ff;
+  color:white;
+  cursor:pointer;
+  transition:.3s;
 }
 
-.arcade-btn:hover{
-transform:scale(1.07);
-box-shadow:0 0 25px #00f7ff;
+button:hover{
+  background:#0099cc;
+  transform:scale(1.03);
 }
 
-/* POPUPS */
-.popup{
-position:fixed;
-top:50%;
-left:50%;
-transform:translate(-50%,-50%) scale(0);
-background:#0b0033;
-border:2px solid #7a00ff;
-border-radius:15px;
-padding:20px;
-width:85%;
-max-width:420px;
-transition:.3s;
+/* ---------- QUESTION CARD ---------- */
+.card{
+  background:rgba(0,0,0,0.55);
+  padding:20px;
+  border-radius:15px;
+  margin-top:15px;
 }
 
-.popup.active{
-transform:translate(-50%,-50%) scale(1);
+.option{
+  background:#1e88e5;
 }
 
-.close{
-margin-top:15px;
-padding:8px 14px;
-border:none;
-border-radius:8px;
-background:#7a00ff;
-color:white;
+.option:hover{
+  background:#1565c0;
 }
 
-/* EMOJI ANIMATION */
+/* ---------- SCORE ---------- */
+#score{
+  font-size:20px;
+  margin-top:15px;
+}
+
+/* ---------- EMOJIS ---------- */
 .emoji{
-position:fixed;
-font-size:24px;
-animation:up 1.5s forwards;
-pointer-events:none;
+  position:fixed;
+  font-size:24px;
+  animation:fall 2.5s linear forwards;
 }
 
-@keyframes up{
-0%{opacity:1;transform:translateY(0);}
-100%{opacity:0;transform:translateY(-120px);}
+@keyframes fall{
+  from{transform:translateY(-50px);}
+  to{transform:translateY(110vh);}
 }
 
 </style>
@@ -150,172 +104,154 @@ pointer-events:none;
 
 <body>
 
-<div class="orb orb1"></div>
-<div class="orb orb2"></div>
-
-<h1>ARCADE</h1>
-<p class="subtitle">
-Augmented Reality for Creative and Active Digital Education
-</p>
-
 <div class="container">
 
-<button class="arcade-btn" onclick="openLessons()">📚 Lessons</button>
+<h1>🎮 ARCADE Activities</h1>
+<p>Select a topic to answer:</p>
 
-<button class="arcade-btn" onclick="location.href='activity.html'">
-📝 Activity
-</button>
+<div id="menu">
+<button onclick="startQuiz('resp')">🫁 Respiratory System</button>
+<button onclick="startQuiz('dna')">🧬 DNA Double Helix</button>
+<button onclick="startQuiz('pulmo')">❤️ Pulmonary Circulation</button>
+</div>
 
-<button class="arcade-btn" onclick="showPopup('about')">
-✨ What is ARCADE?
-</button>
-
-<button class="arcade-btn" onclick="showPopup('how')">
-🧭 How to Use
-</button>
-
-<button class="arcade-btn" onclick="funFact()">
-🎲 Science Trivia
-</button>
+<div id="quiz"></div>
+<div id="score"></div>
 
 </div>
 
-<!-- LESSON MENU -->
-<div id="lessonMenu" class="popup">
-
-<h3>Choose Lesson</h3>
-
-<button class="arcade-btn" onclick="goLesson('respiratory.html','🫁')">
-Respiratory System
-</button><br><br>
-
-<button class="arcade-btn" onclick="goLesson('circulatory.html','❤️')">
-Circulatory System
-</button><br><br>
-
-<button class="arcade-btn" onclick="goLesson('pulmonary.html','🫀')">
-Pulmonary Circulation
-</button><br><br>
-
-<button class="arcade-btn" onclick="goLesson('coronay.html','💓')">
-Coronary Circulation
-</button><br><br>
-
-<button class="arcade-btn" onclick="goLesson('chromosome.html','🧬')">
-Chromosomes
-</button><br><br>
-
-<button class="arcade-btn" onclick="goLesson('dna.html','🧬')">
-Double Helix DNA
-</button><br><br>
-
-<button class="arcade-btn" onclick="goLesson('rutherfordatom.html','⚛️')">
-Rutherford's Atom Model
-</button><br><br>
-
-<button class="arcade-btn" onclick="goLesson('bohratom.html','⚛️')">
-Neil Bohr Atom Model
-</button>
-
-<br><br>
-<button class="close" onclick="closePopup()">Close</button>
-
-</div>
-
-<!-- ABOUT -->
-<div id="about" class="popup">
-<h3>What is ARCADE?</h3>
-<p>
-ARCADE is an interactive learning platform that uses augmented reality and
-3D models to help students explore science topics in a fun and engaging way.
-</p>
-<button class="close" onclick="closePopup()">Close</button>
-</div>
-
-<!-- HOW TO USE -->
-<div id="how" class="popup">
-<h3>How to Use</h3>
-<p>
-1. Tap Lessons<br>
-2. Choose a topic<br>
-3. Explore the 3D model or AR view<br>
-4. Listen and learn<br>
-5. Answer questions in the Activity section
-</p>
-<button class="close" onclick="closePopup()">Close</button>
-</div>
+<!-- SOUNDS -->
+<audio id="clickSound" src="https://cdn.pixabay.com/audio/2022/03/15/audio_click.mp3"></audio>
+<audio id="correctSound" src="https://cdn.pixabay.com/audio/2022/03/10/audio_correct.mp3"></audio>
+<audio id="wrongSound" src="https://cdn.pixabay.com/audio/2022/03/10/audio_error.mp3"></audio>
 
 <script>
 
-/* EMOJI EFFECT */
-function emoji(icon="✨"){
-for(let i=0;i<10;i++){
-const e=document.createElement("div");
+/* ---------- QUESTIONS ---------- */
+
+const quizzes = {
+
+resp:[
+{q:"What organ allows breathing?",o:["Heart","Lungs","Brain","Kidney"],a:1},
+{q:"Air enters through the?",o:["Nose","Stomach","Skin","Leg"],a:0},
+{q:"Gas taken by body?",o:["Carbon dioxide","Oxygen","Nitrogen","Hydrogen"],a:1},
+{q:"Breathing out removes?",o:["Oxygen","Carbon dioxide","Water","Food"],a:1},
+{q:"Windpipe is called?",o:["Trachea","Esophagus","Vein","Nerve"],a:0},
+{q:"Tiny air sacs?",o:["Alveoli","Cells","Bones","Muscles"],a:0},
+{q:"Breathing muscle?",o:["Diaphragm","Biceps","Skull","Rib"],a:0},
+{q:"System for breathing?",o:["Digestive","Respiratory","Nervous","Circulatory"],a:1},
+{q:"Good lung habit?",o:["Smoking","Exercise","Pollution","Dust"],a:1},
+{q:"Air goes to lungs through?",o:["Bronchi","Veins","Arteries","Skin"],a:0}
+],
+
+dna:[
+{q:"DNA shape?",o:["Circle","Double helix","Square","Flat"],a:1},
+{q:"DNA carries?",o:["Food","Genes","Air","Water"],a:1},
+{q:"DNA found in?",o:["Nucleus","Foot","Hair","Blood only"],a:0},
+{q:"DNA letters?",o:["ABCD","ATCG","WXYZ","EFGH"],a:1},
+{q:"DNA controls?",o:["Weather","Traits","Sound","Light"],a:1},
+{q:"Unit of DNA?",o:["Gene","Bone","Cell wall","Organ"],a:0},
+{q:"DNA inherited from?",o:["Friends","Parents","Teacher","Food"],a:1},
+{q:"DNA makes?",o:["Proteins","Rocks","Sand","Clouds"],a:0},
+{q:"Twisted ladder look?",o:["Helix","Cube","Line","Dot"],a:0},
+{q:"DNA is inside?",o:["Cells","Shoes","Water","Air"],a:0}
+],
+
+pulmo:[
+{q:"Pulmonary circulation connects?",o:["Heart & lungs","Brain & legs","Skin & bones","Eyes & ears"],a:0},
+{q:"Blood goes to lungs to get?",o:["Sugar","Oxygen","Salt","Water"],a:1},
+{q:"Blood returns to?",o:["Heart","Kidney","Liver","Foot"],a:0},
+{q:"Pulmonary artery carries?",o:["Oxygen-rich","Oxygen-poor","Food","Waste"],a:1},
+{q:"Pulmonary vein carries?",o:["Oxygen-rich","Dirty blood","Air","Water"],a:0},
+{q:"Gas exchange happens in?",o:["Alveoli","Bones","Skin","Brain"],a:0},
+{q:"Main pump organ?",o:["Heart","Lung","Muscle","Eye"],a:0},
+{q:"Blood color after oxygen?",o:["Bright red","Blue","Green","Black"],a:0},
+{q:"Circulation means?",o:["Movement of blood","Eating","Sleeping","Talking"],a:0},
+{q:"System working with lungs?",o:["Circulatory","Digestive","Skeletal","Nervous"],a:0}
+]
+
+};
+
+let currentQuiz=[];
+let index=0;
+let score=0;
+
+/* ---------- START QUIZ ---------- */
+function startQuiz(topic){
+playClick();
+document.getElementById("menu").style.display="none";
+currentQuiz=quizzes[topic];
+index=0;
+score=0;
+showQuestion();
+}
+
+/* ---------- SHOW QUESTION ---------- */
+function showQuestion(){
+
+if(index>=currentQuiz.length){
+document.getElementById("quiz").innerHTML="";
+document.getElementById("score").innerHTML=
+`🏆 Score: ${score}/10 <br><br>
+<button onclick="location.reload()">Back to Topics</button>`;
+return;
+}
+
+let q=currentQuiz[index];
+
+let html=`<div class="card">
+<h3>${index+1}. ${q.q}</h3>`;
+
+q.o.forEach((opt,i)=>{
+html+=`<button class="option" onclick="answer(${i})">${opt}</button>`;
+});
+
+html+="</div>";
+
+document.getElementById("quiz").innerHTML=html;
+}
+
+/* ---------- ANSWER ---------- */
+function answer(choice){
+
+if(choice===currentQuiz[index].a){
+score++;
+playCorrect();
+emojiRain();
+}else{
+playWrong();
+}
+
+index++;
+showQuestion();
+}
+
+/* ---------- EMOJI CELEBRATION ---------- */
+function emojiRain(){
+for(let i=0;i<25;i++){
+let e=document.createElement("div");
 e.className="emoji";
-e.innerText=icon;
-e.style.left=Math.random()*window.innerWidth+"px";
-e.style.top=(window.innerHeight-80)+"px";
+e.innerText=["🎉","✨","🥳","⭐","🎊"][Math.floor(Math.random()*5)];
+e.style.left=Math.random()*100+"vw";
 document.body.appendChild(e);
-setTimeout(()=>e.remove(),1500);
+setTimeout(()=>e.remove(),2500);
 }
 }
 
-/* POPUPS */
-function showPopup(id){
-emoji();
-document.getElementById(id).classList.add("active");
+/* ---------- SOUND FIX (IMPORTANT) ---------- */
+function playClick(){
+document.getElementById("clickSound").currentTime=0;
+document.getElementById("clickSound").play().catch(()=>{});
 }
 
-function closePopup(){
-document.querySelectorAll(".popup")
-.forEach(p=>p.classList.remove("active"));
+function playCorrect(){
+document.getElementById("correctSound").currentTime=0;
+document.getElementById("correctSound").play().catch(()=>{});
 }
 
-/* LESSON MENU */
-function openLessons(){
-emoji("📚");
-document.getElementById("lessonMenu").classList.add("active");
-}
-
-/* GO TO LESSON */
-function goLesson(page,icon){
-emoji(icon);
-setTimeout(()=>location.href=page,400);
-}
-
-/* 15 SCIENCE TRIVIAS */
-const facts=[
-"🫁 Lungs contain about 300 million alveoli.",
-"🧬 Human DNA is 99.9% identical between people.",
-"⚛️ Atoms are mostly empty space.",
-"🫀 The heart beats about 100,000 times per day.",
-"🧬 Chromosomes carry genetic information.",
-"⚛️ Rutherford discovered the atomic nucleus.",
-"⚛️ Bohr explained electron energy levels.",
-"🫁 Breathing rate increases during exercise.",
-"🧬 DNA can stretch about 2 meters if uncoiled.",
-"🫀 Blood travels the body in about 1 minute.",
-"⚛️ Protons have positive charge.",
-"⚛️ Electrons move around the nucleus.",
-"🫀 The heart has four chambers.",
-"🧬 Genes are sections of DNA.",
-"⚛️ Gold foil experiment proved nucleus exists."
-];
-
-let triviaIndex=0;
-
-function funFact(){
-
-emoji("⭐");
-
-alert(facts[triviaIndex]);
-
-triviaIndex++;
-
-if(triviaIndex>=facts.length){
-triviaIndex=0;
-}
-
+function playWrong(){
+document.getElementById("wrongSound").currentTime=0;
+document.getElementById("wrongSound").play().catch(()=>{});
 }
 
 </script>
