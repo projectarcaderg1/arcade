@@ -17,8 +17,6 @@ font-family:'Orbitron',sans-serif;
 color:white;
 text-align:center;
 overflow:hidden;
-
-/* image background */
 background:url("background.png") center/cover no-repeat fixed;
 }
 
@@ -119,6 +117,8 @@ padding:20px;
 width:85%;
 max-width:420px;
 transition:.3s;
+max-height:80vh;
+overflow:auto;
 }
 
 .popup.active{
@@ -152,7 +152,6 @@ pointer-events:none;
 
 <body>
 
-<!-- ORBS -->
 <div class="orb orb1"></div>
 <div class="orb orb2"></div>
 
@@ -183,7 +182,6 @@ Augmented Reality for Creative and Active Digital Education
 
 </div>
 
-<!-- LESSON MENU -->
 <div id="lessonMenu" class="popup">
 <h3>Choose Lesson</h3>
 
@@ -191,19 +189,38 @@ Augmented Reality for Creative and Active Digital Education
 🫁 Respiratory System
 </button><br><br>
 
-<button class="arcade-btn" onclick="goLesson('dna.html','🧬')">
-🧬 DNA Double Helix
+<button class="arcade-btn" onclick="goLesson('circulatory.html','❤️')">
+❤️ Circulatory System
 </button><br><br>
 
 <button class="arcade-btn" onclick="goLesson('pulmonary.html','🫀')">
 🫀 Pulmonary Circulation
+</button><br><br>
+
+<button class="arcade-btn" onclick="goLesson('coronary.html','💓')">
+💓 Coronary Circulation
+</button><br><br>
+
+<button class="arcade-btn" onclick="goLesson('chromosome.html','🧬')">
+🧬 Chromosomes
+</button><br><br>
+
+<button class="arcade-btn" onclick="goLesson('dna.html','🔬')">
+🔬 Double Helix DNA
+</button><br><br>
+
+<button class="arcade-btn" onclick="goLesson('rutherfordatom.html','⚛️')">
+⚛️ Rutherford's Atom Model
+</button><br><br>
+
+<button class="arcade-btn" onclick="goLesson('bohratom.html','🌌')">
+🌌 Neil Bohr Atom Model
 </button>
 
 <br><br>
 <button class="close" onclick="closePopup()">Close</button>
 </div>
 
-<!-- ABOUT -->
 <div id="about" class="popup">
 <h3>What is ARCADE?</h3>
 <p>
@@ -213,7 +230,6 @@ interactive 3D learning, and digital exploration.
 <button class="close" onclick="closePopup()">Close</button>
 </div>
 
-<!-- HOW -->
 <div id="how" class="popup">
 <h3>How to Use</h3>
 <p>
@@ -228,7 +244,6 @@ interactive 3D learning, and digital exploration.
 
 <script>
 
-/* SOUND SYSTEM */
 let unlocked=false;
 const clickSound=new Audio("https://cdn.pixabay.com/download/audio/2022/03/15/audio_c8c8a73467.mp3");
 
@@ -249,7 +264,6 @@ s.play();
 }
 }
 
-/* EMOJI EFFECT */
 function emoji(icon="✨"){
 for(let i=0;i<10;i++){
 const e=document.createElement("div");
@@ -262,7 +276,6 @@ setTimeout(()=>e.remove(),1500);
 }
 }
 
-/* POPUPS */
 function showPopup(id){
 playSound();
 emoji();
@@ -274,7 +287,6 @@ document.querySelectorAll(".popup")
 .forEach(p=>p.classList.remove("active"));
 }
 
-/* LESSONS */
 function openLessons(){
 playSound();
 emoji("📚");
@@ -287,12 +299,12 @@ emoji(icon);
 setTimeout(()=>location.href=page,400);
 }
 
-/* TRIVIA */
 const facts=[
 "🫁 Lungs contain millions of alveoli.",
 "🧬 DNA stores genetic instructions.",
 "🫀 Blood travels lungs before body.",
-"⭐ Stars may already be gone when seen."
+"⚛️ Atoms are mostly empty space.",
+"🔬 Chromosomes carry genetic information."
 ];
 
 function funFact(){
