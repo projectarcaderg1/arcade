@@ -3,246 +3,213 @@
 <head>
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>ARCADE Activities</title>
-
+<link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@500&display=swap" rel="stylesheet">
 <style>
 body{
-font-family:Arial;
-background:#020014;
+margin:0;
+font-family:'Orbitron',sans-serif;
 color:white;
 text-align:center;
-padding:20px;
+background:url("background.png") center/cover no-repeat fixed;
 }
-
-.topic{
-margin:25px auto;
-padding:20px;
-background:#0b0033;
-border-radius:12px;
-max-width:800px;
+body::before{
+content:"";
+position:fixed;
+width:100%;
+height:100%;
+background:linear-gradient(rgba(0,10,40,.8),rgba(10,0,50,.9));
+z-index:-1;
 }
-
-.question{
-margin:12px 0;
-text-align:left;
-}
-
-button{
-padding:10px 15px;
-margin-top:10px;
-background:#7a00ff;
-color:white;
+h1{margin-top:20px;text-shadow:0 0 15px #00e1ff,0 0 30px #7a00ff;}
+.arcade-btn{
+margin:10px;
+padding:14px;
+width:260px;
+font-size:16px;
 border:none;
-border-radius:8px;
+border-radius:12px;
+color:white;
+background:linear-gradient(45deg,#00c3ff,#7a00ff);
+box-shadow:0 0 15px #7a00ff;
 cursor:pointer;
 }
-
-button:hover{
-background:#9b30ff;
+.questionBox{
+margin:20px auto;
+width:90%;
+max-width:500px;
+background:#0b0033;
+padding:20px;
+border-radius:15px;
+box-shadow:0 0 20px #7a00ff;
 }
-
-.score{
-margin-top:15px;
-font-weight:bold;
-}
+.emoji{position:fixed;font-size:24px;animation:fall 2s linear forwards;pointer-events:none;}
+@keyframes fall{0%{opacity:1;transform:translateY(-50px);}100%{opacity:0;transform:translateY(100vh);}}
 </style>
 </head>
-
 <body>
+<h1>📝 ARCADE Activity Center</h1>
 
-<h1>📝 ARCADE Activity Questions</h1>
+<div id="menu">
+<button class="arcade-btn" onclick="startTopic('resp')">🫁 Respiratory System</button><br>
+<button class="arcade-btn" onclick="startTopic('circ')">❤️ Circulatory System</button><br>
+<button class="arcade-btn" onclick="startTopic('pulmo')">🫀 Pulmonary Circulation</button><br>
+<button class="arcade-btn" onclick="startTopic('coronary')">💓 Coronary Circulation</button><br>
+<button class="arcade-btn" onclick="startTopic('chrom')">🧬 Chromosomes</button><br>
+<button class="arcade-btn" onclick="startTopic('dna')">🧬 Double Helix DNA</button><br>
+<button class="arcade-btn" onclick="startTopic('rutherford')">⚛️ Rutherford's Atom Model</button><br>
+<button class="arcade-btn" onclick="startTopic('bohr')">⚛️ Neil Bohr Atom Model</button>
+</div>
 
-<div id="quiz"></div>
+<div id="quizArea"></div>
+<h2 id="score">Points: 0</h2>
 
 <script>
+let points=0;
+function updateScore(){document.getElementById("score").innerText="Points: "+points;}
+function emojiRain(){const emojis=["🎉","✨","⭐","💥","🚀","🎊"];for(let i=0;i<35;i++){const e=document.createElement("div");e.className="emoji";e.innerText=emojis[Math.floor(Math.random()*emojis.length)];e.style.left=Math.random()*window.innerWidth+"px";document.body.appendChild(e);setTimeout(()=>e.remove(),2000);}}
 
-const topics = [
-
-{
-name:"Respiratory System",
-questions:[
-{q:"Which structure prevents food from entering the trachea?",o:["Alveoli","Epiglottis","Bronchi","Pleura"],a:1},
-{q:"Gas exchange in the lungs occurs primarily in the:",o:["Bronchi","Alveoli","Trachea","Larynx"],a:1},
-{q:"Which muscle is mainly responsible for breathing?",o:["Intercostal","Diaphragm","Abdominal","Cardiac"],a:1},
-{q:"Which gas is transported from the lungs to body cells?",o:["Carbon dioxide","Nitrogen","Oxygen","Hydrogen"],a:2},
-{q:"The bronchi branch into smaller tubes called:",o:["Bronchioles","Alveoli","Capillaries","Tracheae"],a:0},
-{q:"What protects the lungs within the chest cavity?",o:["Skull","Rib cage","Pelvis","Vertebrae"],a:1},
-{q:"Which organ produces sound during breathing?",o:["Pharynx","Larynx","Bronchi","Alveoli"],a:1},
-{q:"Which structure connects throat to lungs?",o:["Esophagus","Trachea","Aorta","Bronchiole"],a:1},
-{q:"The respiratory system helps maintain:",o:["pH balance","Bone growth","Digestion","Hormones"],a:0},
-{q:"Carbon dioxide leaves the body during:",o:["Inhalation","Exhalation","Digestion","Circulation"],a:1}
+const questions={
+resp:[
+["Which organ helps you breathe?","Heart","Lungs","Brain","Kidney","B"],
+["Air enters through the?","Nose","Stomach","Leg","Skin","A"],
+["Gas exchange happens in?","Alveoli","Veins","Bones","Muscles","A"],
+["Breathing in is called?","Exhale","Inhale","Digest","Pump","B"],
+["Oxygen moves into?","Blood","Hair","Nails","Teeth","A"],
+["The diaphragm helps?","Breathing","Thinking","Walking","Eating","A"],
+["Carbon dioxide leaves during?","Inhale","Exhale","Sleep","Run","B"],
+["Respiratory system works with?","Circulatory","Digestive","Skeletal","None","A"],
+["Main breathing muscle?","Diaphragm","Arm","Foot","Back","A"],
+["Function of lungs?","Pump blood","Exchange gases","Digest food","Store water","B"]
+],
+circ:[
+["Heart pumps blood to?","Lungs","Body","Brain","Stomach","B"],
+["Blood travels through?","Arteries","Legs","Skin","Hair","A"],
+["Veins carry blood?","To heart","Away from heart","Nowhere","To lungs","A"],
+["Main blood cell?","Red blood cell","White blood cell","Platelet","Plasma","A"],
+["Circulatory system helps with?","Transport","Digestion","Thinking","Moving","A"],
+["Heart has how many chambers?","2","4","3","1","B"],
+["Blood pressure measures?","Systolic & Diastolic","Heartbeats","Temperature","Oxygen","A"],
+["Veins vs Arteries?","Veins to heart, Arteries from heart","Reverse","None","Both","A"],
+["Blood contains?","Cells","Water","Bones","Hair","A"],
+["Blood carries?","Oxygen & nutrients","Sugar","CO2","Heat","A"]
+],
+pulmo:[
+["Pulmonary circulation connects?","Heart & lungs","Brain & legs","Skin & bones","Eyes & ears","A"],
+["Blood goes to lungs to get?","Oxygen","Sugar","Water","Heat","A"],
+["Blood leaving lungs is?","Oxygenated","Dirty","Cold","Dry","A"],
+["Pulmonary artery carries?","Deoxygenated blood","Food","Air","Water","A"],
+["Pulmonary vein carries?","Oxygenated blood","CO2","Waste","Fat","A"],
+["Gas exchange happens in?","Lungs","Hands","Feet","Eyes","A"],
+["Heart chamber sending blood to lungs?","Right ventricle","Left arm","Brain","Kidney","A"],
+["Pulmonary means?","Related to lungs","Bones","Food","Energy","A"],
+["Blood returns to?","Heart","Skin","Muscle","Hair","A"],
+["Purpose of pulmonary circulation?","Oxygenate blood","Digest food","Move bones","Think","A"]
+],
+coronary:[
+["Coronary arteries supply?","Heart muscles","Lungs","Brain","Kidneys","A"],
+["Blockage leads to?","Heart attack","Cough","Fever","Cold","A"],
+["Coronary veins drain?","Heart muscles","Lungs","Brain","Skin","A"],
+["Heart tissue gets?","Oxygen & nutrients","Sugar","Water","Fat","A"],
+["Angina means?","Chest pain","Headache","Stomach ache","Leg pain","A"],
+["Heart needs blood for?","Energy","Sleep","Digestion","Breathing","A"],
+["Heart tissue damage is called?","Myocardial infarction","Allergy","Stroke","A"],
+["Coronary circulation is?","Heart only","Lungs only","Brain only","Body only","A"],
+["Heart cells require?","Oxygen & nutrients","Water","Sugar","Protein","A"],
+["Coronary vessels include?","Arteries & veins","Heart","Brain","Lungs","A"]
+],
+chrom:[
+["Chromosomes carry?","Genes","Air","Water","Blood","A"],
+["Humans have how many?","46","23","44","42","A"],
+["Made of?","DNA & proteins","Fat","Sugar","Vitamins","A"],
+["Chromosome found in?","Nucleus","Heart","Lungs","Skin","A"],
+["Chromosome function?","Genetic info","Transport","Energy","Digestion","A"],
+["Sex chromosomes are?","X & Y","A & B","C & D","M & N","A"],
+["Autosomes are?","Non-sex","Sex","Blood","Bones","A"],
+["Karyotype shows?","Chromosome pairs","Blood cells","Heart size","Eye color","A"],
+["Mutation affects?","DNA","Bones","Oxygen","Muscles","A"],
+["Chromosomes determine?","Traits","Height","Weight","Age","Hair","A"]
+],
+dna:[
+["DNA stands for?","Deoxyribonucleic Acid","Digital Network","Data Node","None","A"],
+["Shape of DNA?","Circle","Double Helix","Square","Triangle","B"],
+["DNA found in?","Nucleus","Skin","Hair","Air","A"],
+["DNA carries?","Energy","Genetic info","Water","Heat","B"],
+["DNA made of?","Nucleotides","Cells","Bones","Organs","A"],
+["Genes are part of?","DNA","Lungs","Blood","Brain","A"],
+["DNA controls?","Traits","Weather","Sound","Light","A"],
+["Humans share about?","10% DNA","50%","99.9%","0%","C"],
+["DNA looks like a?","Twisted ladder","Ball","Cube","Line","A"],
+["DNA helps in?","Growth","Cooking","Running","Sleeping","A"]
+],
+rutherford:[
+["Rutherford model shows?","Protons","Electrons orbit","Neutrons","Atoms","B"],
+["Atom nucleus contains?","Protons & Neutrons","Electrons","Only protons","Nothing","A"],
+["Electrons orbit where?","Nucleus","Sky","Heart","Blood","A"],
+["Alpha particle experiment?","Gold foil","Lead","Aluminum","Copper","A"],
+["Rutherford concluded?","Mostly empty space","Full","Solid","Liquid","Gas","A"],
+["Rutherford discovered?","Nucleus","Electrons","Protons","Neutrons","A"],
+["Protons have?","Positive charge","Negative","Neutral","Mixed","A"],
+["Nucleus is?","Dense center","Empty","Water","Air","A"],
+["Electrons move around?","Nucleus","Heart","Blood","Feet","A"],
+["Atom model significance?","Explains structure","Explains breathing","Explains digestion","Explains movement","A"]
+],
+bohr:[
+["Bohr proposed?","Electrons in energy levels","Electrons random","Nucleus floats","Atoms merge","A"],
+["Electrons exist in?","Specific orbits","Cloud","Heart","Skin","A"],
+["Bohr model explains?","Atom behavior","Heart behavior","DNA behavior","Blood behavior","A"],
+["Energy levels have?","Fixed energy","Random","Liquid","Gas","A"],
+["Bohr said electrons?","Jump between levels","Stay still","Vibrate","Rotate","A"],
+["Electrons move with?","Energy","Gravity","Motion","Heat","A"],
+["Bohr model solves?","Structure problem","Circulation problem","Respiration problem","DNA problem","A"],
+["Bohr energy levels formula?","E=-RH(1/n^2)","E=MC2","V=IR","P=F","A"],
+["Bohr model shows?","Atoms have nucleus","Atoms are empty","Atoms are liquid","Atoms move","A"],
+["Bohr contribution?","Explain spectra","Explain lungs","Explain blood","Explain DNA","A"]
 ]
-},
 
-{
-name:"Circulatory System",
-questions:[
-{q:"Which vessel carries blood away from the heart?",o:["Vein","Artery","Capillary","Venule"],a:1},
-{q:"Which blood cells fight infection?",o:["Red blood cells","Platelets","White blood cells","Plasma"],a:2},
-{q:"The largest artery in the body is:",o:["Pulmonary artery","Aorta","Carotid","Coronary"],a:1},
-{q:"Which chamber pumps blood to the lungs?",o:["Left atrium","Right ventricle","Left ventricle","Right atrium"],a:1},
-{q:"Capillaries function mainly to:",o:["Pump blood","Exchange materials","Store blood","Filter toxins"],a:1},
-{q:"Hemoglobin carries:",o:["Carbon dioxide","Glucose","Oxygen","Hormones"],a:2},
-{q:"Platelets are responsible for:",o:["Immunity","Clotting","Oxygen transport","Digestion"],a:1},
-{q:"The heart is located between the:",o:["Lungs","Kidneys","Liver","Brain"],a:0},
-{q:"Blood returning to heart enters through:",o:["Arteries","Veins","Capillaries","Valves"],a:1},
-{q:"Circulation that supplies body organs is:",o:["Pulmonary","Systemic","Coronary","Lymphatic"],a:1}
-]
-},
+};
 
-{
-name:"Pulmonary Circulation",
-questions:[
-{q:"Pulmonary circulation moves blood between:",o:["Heart and lungs","Heart and brain","Heart and liver","Heart and muscles"],a:0},
-{q:"Which vessel carries deoxygenated blood to lungs?",o:["Pulmonary artery","Pulmonary vein","Aorta","Vena cava"],a:0},
-{q:"Oxygenated blood returns through:",o:["Pulmonary vein","Pulmonary artery","Aorta","Coronary artery"],a:0},
-{q:"Pulmonary circulation begins at:",o:["Left atrium","Right ventricle","Left ventricle","Right atrium"],a:1},
-{q:"Gas exchange occurs in lung:",o:["Bronchi","Alveoli","Pleura","Trachea"],a:1},
-{q:"Pulmonary circulation is part of:",o:["Digestive system","Respiratory-circulatory interaction","Nervous system","Excretory system"],a:1},
-{q:"Which side of heart sends blood to lungs?",o:["Left","Right","Top","Bottom"],a:1},
-{q:"Which gas enters blood in lungs?",o:["Carbon dioxide","Nitrogen","Oxygen","Methane"],a:2},
-{q:"Pulmonary veins carry:",o:["Deoxygenated blood","Oxygenated blood","Hormones","Nutrients"],a:1},
-{q:"Pulmonary circulation supports:",o:["Gas exchange","Digestion","Hormones","Bone growth"],a:0}
-]
-},
+/* ================= QUIZ ENGINE ================= */
+let currentTopic=[];
+let index=0;
 
-{
-name:"Coronary Circulation",
-questions:[
-{q:"Coronary circulation supplies blood to:",o:["Lungs","Heart muscle","Brain","Kidneys"],a:1},
-{q:"Which arteries supply the heart?",o:["Coronary arteries","Pulmonary arteries","Carotid arteries","Renal arteries"],a:0},
-{q:"Blockage of coronary artery leads to:",o:["Asthma","Heart attack","Stroke","Diabetes"],a:1},
-{q:"Coronary veins drain into:",o:["Right atrium","Left atrium","Right ventricle","Pulmonary vein"],a:0},
-{q:"Heart muscle is called:",o:["Myocardium","Endocardium","Epicardium","Pericardium"],a:0},
-{q:"Reduced coronary flow causes:",o:["Hypertension","Ischemia","Diabetes","Anemia"],a:1},
-{q:"Main function of coronary vessels:",o:["Pump blood","Feed heart tissue","Filter blood","Carry oxygen to lungs"],a:1},
-{q:"Coronary arteries originate from:",o:["Pulmonary trunk","Aorta","Vena cava","Carotid"],a:1},
-{q:"Heart needs constant oxygen because:",o:["It pumps continuously","It stores blood","It digests nutrients","It filters waste"],a:0},
-{q:"Coronary blockage usually caused by:",o:["Calcium deficiency","Plaque buildup","Low sugar","Virus"],a:1}
-]
-},
-
-{
-name:"Chromosomes",
-questions:[
-{q:"Chromosomes are made of:",o:["DNA and protein","RNA and sugar","Lipids","Minerals"],a:0},
-{q:"Humans normally have how many chromosomes?",o:["23","46","44","48"],a:1},
-{q:"Chromosomes are located in:",o:["Cell membrane","Nucleus","Cytoplasm","Mitochondria"],a:1},
-{q:"Genes are:",o:["Protein chains","Segments of DNA","Types of cells","Enzymes"],a:1},
-{q:"Chromosomes duplicate during:",o:["Mitosis","Interphase","Meiosis","Cytokinesis"],a:1},
-{q:"Sex chromosomes determine:",o:["Height","Eye color","Biological sex","Blood pressure"],a:2},
-{q:"Chromatin condenses to form:",o:["Proteins","Chromosomes","Lipids","Carbohydrates"],a:1},
-{q:"Chromosome structure includes:",o:["Centromere","Ribosome","Golgi","Lysosome"],a:0},
-{q:"DNA coils around:",o:["Histones","Enzymes","Lipids","Sugars"],a:0},
-{q:"Chromosomes ensure:",o:["Protein digestion","Genetic inheritance","Energy release","Blood flow"],a:1}
-]
-},
-
-{
-name:"Double Helix DNA",
-questions:[
-{q:"DNA structure was discovered by:",o:["Darwin","Watson and Crick","Newton","Pasteur"],a:1},
-{q:"DNA shape resembles:",o:["Ladder","Circle","Triangle","Cube"],a:0},
-{q:"DNA strands are:",o:["Parallel","Antiparallel","Separate","Circular"],a:1},
-{q:"Adenine pairs with:",o:["Cytosine","Thymine","Guanine","Uracil"],a:1},
-{q:"Guanine pairs with:",o:["Thymine","Adenine","Cytosine","Uracil"],a:2},
-{q:"DNA contains:",o:["4 bases","3 bases","2 bases","6 bases"],a:0},
-{q:"DNA backbone made of:",o:["Sugar-phosphate","Protein","Lipids","Enzymes"],a:0},
-{q:"DNA replication occurs during:",o:["Interphase","Mitosis","Meiosis","Cytokinesis"],a:0},
-{q:"DNA stores:",o:["Energy","Genetic information","Hormones","Minerals"],a:1},
-{q:"Double helix resembles:",o:["Twisted ladder","Ring","Ball","Cube"],a:0}
-]
-},
-
-{
-name:"Rutherford Atom Model",
-questions:[
-{q:"Rutherford discovered:",o:["Electron","Proton","Nucleus","Neutron"],a:2},
-{q:"His experiment used:",o:["Gold foil","Copper wire","Glass tube","Magnet"],a:0},
-{q:"Most alpha particles:",o:["Passed through","Stopped","Reflected","Exploded"],a:0},
-{q:"Rutherford model proposed:",o:["Solid atom","Nuclear atom","Plum pudding","Planetary orbit"],a:1},
-{q:"Atom mostly consists of:",o:["Matter","Empty space","Energy","Plasma"],a:1},
-{q:"Positive charge concentrated in:",o:["Electron cloud","Nucleus","Shell","Orbit"],a:1},
-{q:"Rutherford experiment used:",o:["Alpha particles","Beta rays","Gamma rays","Light"],a:0},
-{q:"Electron located:",o:["In nucleus","Around nucleus","In proton","In neutron"],a:1},
-{q:"Rutherford model replaced:",o:["Dalton model","Thomson model","Bohr model","Quantum model"],a:1},
-{q:"Key discovery:",o:["Nuclear structure","Electron spin","Neutron mass","Isotopes"],a:0}
-]
-},
-
-{
-name:"Bohr Atom Model",
-questions:[
-{q:"Bohr improved model of:",o:["Dalton","Rutherford","Thomson","Chadwick"],a:1},
-{q:"Electrons orbit nucleus in:",o:["Random paths","Energy levels","Clouds","Lines"],a:1},
-{q:"Energy levels are:",o:["Shells","Cells","Fields","Beams"],a:0},
-{q:"Electrons move to higher level by:",o:["Losing energy","Gaining energy","Stopping","Splitting"],a:1},
-{q:"Bohr model explains:",o:["Chemical bonding","Hydrogen spectrum","Gravity","Magnetism"],a:1},
-{q:"Lowest energy level:",o:["Ground state","Excited state","Ion state","Stable state"],a:0},
-{q:"Electron dropping emits:",o:["Energy","Mass","Force","Charge"],a:0},
-{q:"Bohr theory based on:",o:["Quantum ideas","Gravity","Magnetism","Relativity"],a:0},
-{q:"Bohr model applies best to:",o:["Hydrogen atom","Iron atom","Gold atom","Carbon atom"],a:0},
-{q:"Electrons revolve around:",o:["Proton","Nucleus","Neutron","Atom shell"],a:1}
-]
+function startTopic(topic){
+document.getElementById("menu").style.display="none";
+currentTopic=questions[topic];
+index=0;
+showQuestion();
 }
 
-];
+function showQuestion(){
+if(index>=currentTopic.length){
+document.getElementById("quizArea").innerHTML=
+"<h2>✅ Topic Finished!</h2><button class='arcade-btn' onclick='location.reload()'>Back to Topics</button>";
+return;
+}
 
-let totalPoints = 0;
+let q=currentTopic[index];
 
-const quiz = document.getElementById("quiz");
-
-topics.forEach((topic,ti)=>{
-
-let html = `<div class="topic"><h2>${topic.name}</h2>`;
-
-topic.questions.forEach((q,qi)=>{
-
-html += `
-<div class="question">
-<p>${qi+1}. ${q.q}</p>
-${q.o.map((opt,oi)=>`
-<label>
-<input type="radio" name="t${ti}q${qi}" value="${oi}">
-${String.fromCharCode(65+oi)}. ${opt}
-</label><br>
-`).join("")}
+document.getElementById("quizArea").innerHTML=`
+<div class="questionBox">
+<h3>${q[0]}</h3>
+<button class="arcade-btn" onclick="answer('A')">A. ${q[1]}</button><br>
+<button class="arcade-btn" onclick="answer('B')">B. ${q[2]}</button><br>
+<button class="arcade-btn" onclick="answer('C')">C. ${q[3]}</button><br>
+<button class="arcade-btn" onclick="answer('D')">D. ${q[4]}</button>
 </div>
 `;
-
-});
-
-html += `<button onclick="submitTopic(${ti})">Submit ${topic.name}</button>
-<div class="score" id="score${ti}"></div>
-</div>`;
-
-quiz.innerHTML += html;
-
-});
-
-function submitTopic(ti){
-
-let topic = topics[ti];
-let score = 0;
-
-topic.questions.forEach((q,qi)=>{
-
-let radios = document.getElementsByName(`t${ti}q${qi}`);
-
-for(let r of radios){
-if(r.checked && parseInt(r.value) === q.a){
-score += 10;
-}
 }
 
-});
-
-totalPoints += score;
-
-document.getElementById("score"+ti).innerText =
-"Points Earned: "+score+" / 100";
-
-alert("🎉 You earned "+score+" points for this topic!");
-
+function answer(choice){
+let correct=currentTopic[index][5];
+if(choice===correct){
+points+=10;
+updateScore();
+emojiRain();
+}else{
+alert(`❌ Wrong! Correct answer: ${correct}`);
+}
+index++;
+showQuestion();
 }
 
 </script>
