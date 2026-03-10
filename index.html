@@ -6,7 +6,7 @@
 <title>A.R.C.A.D.E - Augmented Reality for Creative and Active Digital Education</title>
 
 <style>
-body{
+body {
     margin:0;
     font-family: Arial, Helvetica, sans-serif;
     text-align:center;
@@ -17,72 +17,104 @@ body{
     background-size:cover;
     background-position:center;
     background-attachment:fixed;
+    overflow-x:hidden;
 }
 
-h1{
+/* Title */
+h1 {
     margin-top:20px;
     color:#9be7ff;
-    text-shadow:0 0 15px #00bfff, 0 0 25px #7c4cff;
+    text-shadow:0 0 20px #00bfff, 0 0 35px #7c4cff;
+    font-size:2.5em;
 }
 
-button{
-    margin:10px;
-    padding:15px 25px;
+/* Buttons Container */
+.button-container {
+    display:flex;
+    flex-wrap:wrap;
+    justify-content:center;
+    gap:15px;
+    margin-top:30px;
+}
+
+/* Buttons */
+button {
+    flex:1 1 120px;
+    min-width:120px;
+    max-width:200px;
+    margin:5px;
+    padding:15px 20px;
     border:none;
-    border-radius:10px;
-    background:linear-gradient(45deg,#4c7cff,#7c4cff);
+    border-radius:15px;
+    background:linear-gradient(135deg,#4c7cff,#7c4cff,#9b7cff);
     color:white;
     font-size:18px;
     cursor:pointer;
-    box-shadow:0 0 15px rgba(100,100,255,0.7);
-    transition:0.2s;
+    box-shadow:0 0 20px rgba(100,100,255,0.7);
+    transition:0.25s;
+    position:relative;
+    overflow:hidden;
 }
 
 button:hover{
     transform:scale(1.05);
+    box-shadow:0 0 35px rgba(150,150,255,0.9);
 }
 
-.popup{
+/* Popups */
+.popup {
     display:none;
     position:fixed;
     top:50%;
     left:50%;
-    transform:translate(-50%,-50%);
-    background:linear-gradient(135deg,#4c7cff,#7c4cff);
-    padding:25px;
-    border-radius:15px;
+    transform:translate(-50%,-50%) scale(0.7);
+    background:linear-gradient(135deg,#4c7cff,#7c4cff,#9b7cff);
+    padding:30px;
+    border-radius:25px;
     width:90%;
     max-width:500px;
-    box-shadow:0 0 20px rgba(0,0,0,0.8);
+    box-shadow:0 0 40px rgba(0,0,0,0.8), 0 20px 60px rgba(0,0,50,0.5);
     z-index:10;
+    transition:0.3s ease-in-out;
+    color:white;
 }
 
-.popup h2{
+.popup.show {
+    display:block;
+    transform:translate(-50%,-50%) scale(1);
+}
+
+/* Popup headings */
+.popup h2 {
     margin-top:0;
     color:#fff;
-    text-shadow:0 0 10px #00bfff;
+    text-shadow:0 0 15px #00bfff;
 }
 
+/* Close button */
 .close-btn{
-    margin-top:15px;
-    padding:10px 20px;
+    margin-top:20px;
+    padding:12px 25px;
     font-size:16px;
-    background:linear-gradient(45deg,#ff4c7c,#4c7cff);
+    background:linear-gradient(45deg,#ff4c7c,#4c7cff,#9b7cff);
     color:white;
     border:none;
-    border-radius:10px;
+    border-radius:15px;
     cursor:pointer;
+    box-shadow:0 0 15px rgba(100,100,255,0.7);
 }
 
-.emoji{
+/* Emoji effect */
+.emoji {
     position:fixed;
-    font-size:24px;
+    font-size:28px;
     animation:fall 3s linear forwards;
+    z-index:999;
 }
 
-@keyframes fall{
-    0%{transform:translateY(-50px)}
-    100%{transform:translateY(100vh)}
+@keyframes fall {
+    0% {transform:translateY(-50px) rotate(0deg);}
+    100% {transform:translateY(100vh) rotate(360deg);}
 }
 </style>
 </head>
@@ -91,7 +123,7 @@ button:hover{
 <h1>A.R.C.A.D.E</h1>
 
 <!-- Main Buttons -->
-<div>
+<div class="button-container">
     <button onclick="openLessons()">📚 Lessons</button>
     <button onclick="openActivities()">📝 Activities</button>
     <button onclick="showTrivia()">💡 Science Trivia</button>
@@ -102,28 +134,32 @@ button:hover{
 <!-- Lessons Popup -->
 <div id="lessonsPopup" class="popup">
     <h2>Select a Lesson</h2>
-    <button onclick="window.location.href='respiratory.html'">Respiratory System</button><br>
-    <button onclick="window.location.href='circulatory.html'">Circulatory System</button><br>
-    <button onclick="window.location.href='pulmonary.html'">Pulmonary Circulation</button><br>
-    <button onclick="window.location.href='coronary.html'">Coronary Circulation</button><br>
-    <button onclick="window.location.href='chromosome.html'">Chromosomes</button><br>
-    <button onclick="window.location.href='dna.html'">Double Helix DNA</button><br>
-    <button onclick="window.location.href='rutherfordatom.html'">Rutherford's Atom</button><br>
-    <button onclick="window.location.href='bohratom.html'">Bohr Atom</button><br>
+    <div class="button-container">
+        <button onclick="location.href='respiratory.html'">Respiratory System</button>
+        <button onclick="location.href='circulatory.html'">Circulatory System</button>
+        <button onclick="location.href='pulmonary.html'">Pulmonary Circulation</button>
+        <button onclick="location.href='coronary.html'">Coronary Circulation</button>
+        <button onclick="location.href='chromosome.html'">Chromosomes</button>
+        <button onclick="location.href='dna.html'">Double Helix DNA</button>
+        <button onclick="location.href='rutherfordatom.html'">Rutherford's Atom</button>
+        <button onclick="location.href='bohratom.html'">Bohr Atom</button>
+    </div>
     <button class="close-btn" onclick="closeLessons()">Close</button>
 </div>
 
 <!-- Activities Popup -->
 <div id="activitiesPopup" class="popup">
     <h2>Select Activity</h2>
-    <button onclick="window.location.href='activity/respiratory.html'">Respiratory System</button><br>
-    <button onclick="window.location.href='activity/circulatory.html'">Circulatory System</button><br>
-    <button onclick="window.location.href='activity/pulmonary.html'">Pulmonary Circulation</button><br>
-    <button onclick="window.location.href='activity/coronary.html'">Coronary Circulation</button><br>
-    <button onclick="window.location.href='activity/chromosome.html'">Chromosomes</button><br>
-    <button onclick="window.location.href='activity/dna.html'">Double Helix DNA</button><br>
-    <button onclick="window.location.href='activity/rutherfordatom.html'">Rutherford's Atom</button><br>
-    <button onclick="window.location.href='activity/bohratom.html'">Bohr Atom</button><br>
+    <div class="button-container">
+        <button onclick="location.href='activity/respiratory.html'">Respiratory System</button>
+        <button onclick="location.href='activity/circulatory.html'">Circulatory System</button>
+        <button onclick="location.href='activity/pulmonary.html'">Pulmonary Circulation</button>
+        <button onclick="location.href='activity/coronary.html'">Coronary Circulation</button>
+        <button onclick="location.href='activity/chromosome.html'">Chromosomes</button>
+        <button onclick="location.href='activity/dna.html'">Double Helix DNA</button>
+        <button onclick="location.href='activity/rutherfordatom.html'">Rutherford's Atom</button>
+        <button onclick="location.href='activity/bohratom.html'">Bohr Atom</button>
+    </div>
     <button class="close-btn" onclick="closeActivities()">Close</button>
 </div>
 
@@ -149,7 +185,7 @@ button:hover{
         <li>Explore the 3D model, drag, rotate, and zoom it.</li>
         <li>Tap the Listen button to hear explanation.</li>
         <li>Click View in AR to see it in your real environment.</li>
-        <li>Write your reflection in the box and submit for points.</li>
+        <li>Write your reflection and submit for points.</li>
         <li>Return to main page and click Activities to answer topic quizzes.</li>
         <li>Each correct answer gives 10 points. Total 80 points for 8 topics.</li>
     </ol>
@@ -158,12 +194,12 @@ button:hover{
 
 <script>
 /* POPUP CONTROLS */
-function openLessons(){document.getElementById("lessonsPopup").style.display="block";}
-function closeLessons(){document.getElementById("lessonsPopup").style.display="none";}
-function openActivities(){document.getElementById("activitiesPopup").style.display="block";}
-function closeActivities(){document.getElementById("activitiesPopup").style.display="none";}
+function openLessons(){document.getElementById("lessonsPopup").classList.add("show"); generateEmoji(10);}
+function closeLessons(){document.getElementById("lessonsPopup").classList.remove("show");}
+function openActivities(){document.getElementById("activitiesPopup").classList.add("show"); generateEmoji(10);}
+function closeActivities(){document.getElementById("activitiesPopup").classList.remove("show");}
 function showTrivia(){
-    document.getElementById("triviaPopup").style.display="block";
+    document.getElementById("triviaPopup").classList.add("show"); generateEmoji(5);
     let triviaList=[
         "Water boils at 100°C at sea level.",
         "The heart has four chambers: two atria and two ventricles.",
@@ -189,20 +225,21 @@ function showTrivia(){
     used.push(trivia);
     localStorage.setItem("triviaUsed",JSON.stringify(used));
 }
-function closeTrivia(){document.getElementById("triviaPopup").style.display="none";}
-function showArcadeInfo(){document.getElementById("arcadePopup").style.display="block";}
-function closeArcadeInfo(){document.getElementById("arcadePopup").style.display="none";}
-function showHowToUse(){document.getElementById("howtoPopup").style.display="block";}
-function closeHowToUse(){document.getElementById("howtoPopup").style.display="none";}
+function closeTrivia(){document.getElementById("triviaPopup").classList.remove("show");}
+function showArcadeInfo(){document.getElementById("arcadePopup").classList.add("show"); generateEmoji(5);}
+function closeArcadeInfo(){document.getElementById("arcadePopup").classList.remove("show");}
+function showHowToUse(){document.getElementById("howtoPopup").classList.add("show"); generateEmoji(5);}
+function closeHowToUse(){document.getElementById("howtoPopup").classList.remove("show");}
 
-/* CELEBRATION EMOJIS */
-function celebrate(){
-    let emojis=["🎉","✨","🎊","👏","⭐","💙","⚛️"];
-    for(let i=0;i<30;i++){
+/* EMOJI GENERATOR */
+function generateEmoji(count){
+    let emojis=["🎉","✨","🎊","👏","⭐","💙","⚛️","🧬","🌟"];
+    for(let i=0;i<count;i++){
         let e=document.createElement("div");
         e.className="emoji";
         e.innerText=emojis[Math.floor(Math.random()*emojis.length)];
         e.style.left=Math.random()*100+"vw";
+        e.style.fontSize=(18+Math.random()*20)+"px";
         document.body.appendChild(e);
         setTimeout(()=>{e.remove()},3000);
     }
