@@ -29,21 +29,10 @@ background-attachment:fixed;
 }
 
 h1{
-margin-top:10px;
+margin-top:20px;
 color:#9be7ff;
 text-shadow:0 0 10px #00bfff;
 }
-
-/* points label */
-
-#pointsBox{
-font-size:18px;
-margin-bottom:10px;
-color:#ffd700;
-text-shadow:0 0 8px #ffd700;
-}
-
-/* model */
 
 model-viewer{
 width:100%;
@@ -51,17 +40,14 @@ height:420px;
 background:transparent;
 }
 
-/* hint */
-
 .hint{
 font-size:13px;
-opacity:0.9;
+opacity:0.85;
 margin-bottom:10px;
 }
 
-/* buttons */
-
 .button{
+
 margin:8px;
 padding:12px 20px;
 
@@ -81,8 +67,6 @@ box-shadow:0 0 10px rgba(100,100,255,0.7);
 transform:scale(1.05);
 }
 
-/* reflection */
-
 textarea{
 
 width:90%;
@@ -92,39 +76,22 @@ height:100px;
 border-radius:10px;
 border:none;
 padding:10px;
-font-size:14px;
 
+font-size:14px;
 }
 
-/* confetti */
-
 .emoji{
+
 position:fixed;
 font-size:24px;
 animation:fall 3s linear forwards;
+
 }
 
 @keyframes fall{
+
 0%{transform:translateY(-50px)}
 100%{transform:translateY(100vh)}
-}
-
-/* point popup */
-
-#pointPopup{
-
-position:fixed;
-top:40%;
-left:50%;
-
-transform:translate(-50%,-50%);
-
-font-size:40px;
-color:#00ffcc;
-
-text-shadow:0 0 15px #00ffcc;
-
-display:none;
 
 }
 
@@ -135,18 +102,22 @@ display:none;
 
 <h1>Respiratory System</h1>
 
-<div id="pointsBox">
-⭐ Points: <span id="points">0</span>
-</div>
-
 <model-viewer
+
 src="models/respiratory2.glb"
+
 camera-controls
 auto-rotate
 shadow-intensity="1"
 exposure="1"
+
 ar
-ar-modes="webxr scene-viewer quick-look">
+ar-modes="webxr scene-viewer quick-look"
+
+scale="1 1 1"
+
+>
+
 </model-viewer>
 
 <div class="hint">
@@ -154,6 +125,7 @@ Drag to rotate • Pinch to zoom
 </div>
 
 <button class="button" onclick="startListening()">🔊 Listen</button>
+
 <button class="button" onclick="stopListening()">⏹ Stop Listening</button>
 
 <button class="button"
@@ -175,15 +147,9 @@ placeholder="Write what you learned about the respiratory system...">
 Submit Reflection
 </button>
 
-<div id="pointPopup">+10</div>
-
 <script>
 
-/* POINT SYSTEM */
-
-let points = 0;
-
-/* SPEECH */
+/* SPEECH SYSTEM */
 
 let speech;
 
@@ -193,17 +159,17 @@ let text = `
 The respiratory system allows the body to breathe.
 It supplies oxygen to the blood and removes carbon dioxide.
 
-Air enters through the nose or mouth and passes through the trachea.
-The trachea divides into bronchi that lead to the lungs.
+Air enters the body through the nose or mouth and travels through the trachea.
+The trachea splits into two bronchi that lead into the lungs.
 
 Inside the lungs are tiny air sacs called alveoli.
-These sacs allow oxygen to enter the bloodstream
-and carbon dioxide to leave the blood.
+These sacs allow oxygen to move into the bloodstream
+while carbon dioxide leaves the blood.
 
-When we inhale, the lungs expand.
-When we exhale, the lungs contract.
+When we breathe in, the lungs expand.
+When we breathe out, the lungs contract.
 
-This process is essential for life.
+This continuous process keeps the body supplied with oxygen.
 `;
 
 speech = new SpeechSynthesisUtterance(text);
@@ -216,7 +182,9 @@ speechSynthesis.speak(speech);
 }
 
 function stopListening(){
+
 speechSynthesis.cancel();
+
 }
 
 /* REFLECTION */
@@ -230,39 +198,19 @@ alert("Please write a reflection first.");
 return;
 }
 
+alert("Great job! You earned points!");
+
 celebrate();
 
-setTimeout(()=>{
-addPoints();
-},2000);
-
 }
 
-/* ADD POINTS */
-
-function addPoints(){
-
-points += 10;
-
-document.getElementById("points").innerText = points;
-
-let popup = document.getElementById("pointPopup");
-
-popup.style.display = "block";
-
-setTimeout(()=>{
-popup.style.display="none";
-},1500);
-
-}
-
-/* CONFETTI */
+/* EMOJI CELEBRATION */
 
 function celebrate(){
 
-let emojis=["🎉","✨","🎊","⭐","💙"];
+let emojis=["🎉","✨","🎊","👏","⭐","💙"];
 
-for(let i=0;i<35;i++){
+for(let i=0;i<40;i++){
 
 let e=document.createElement("div");
 
