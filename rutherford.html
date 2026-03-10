@@ -1,0 +1,232 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<title>ARCADE - Rutherford Atom</title>
+
+<script type="module"
+src="https://unpkg.com/@google/model-viewer/dist/model-viewer.min.js">
+</script>
+
+<style>
+
+body{
+margin:0;
+font-family:Arial, Helvetica, sans-serif;
+color:white;
+text-align:center;
+
+background:
+linear-gradient(rgba(0,20,60,0.75), rgba(0,10,40,0.85)),
+url("background.png");
+
+background-size:cover;
+background-position:center;
+background-attachment:fixed;
+}
+
+h1{
+margin-top:20px;
+color:#9be7ff;
+text-shadow:0 0 10px #00bfff;
+}
+
+model-viewer{
+width:100%;
+height:420px;
+background:transparent;
+}
+
+.hint{
+font-size:13px;
+opacity:0.85;
+margin-bottom:10px;
+}
+
+.button{
+
+margin:8px;
+padding:12px 20px;
+
+border:none;
+border-radius:10px;
+
+background:linear-gradient(45deg,#4c7cff,#7ccff);
+color:white;
+
+font-size:16px;
+cursor:pointer;
+
+box-shadow:0 0 10px rgba(100,100,255,0.7);
+}
+
+.button:hover{
+transform:scale(1.05);
+}
+
+textarea{
+
+width:90%;
+max-width:500px;
+height:100px;
+
+border-radius:10px;
+border:none;
+padding:10px;
+
+font-size:14px;
+}
+
+.emoji{
+
+position:fixed;
+font-size:24px;
+animation:fall 3s linear forwards;
+
+}
+
+@keyframes fall{
+
+0%{transform:translateY(-50px)}
+100%{transform:translateY(100vh)}
+
+}
+
+</style>
+</head>
+
+<body>
+
+<h1>Rutherford Atom</h1>
+
+<model-viewer
+
+src="models/rutherfordatom.glb"
+
+camera-controls
+auto-rotate
+shadow-intensity="1"
+exposure="1"
+
+ar
+ar-modes="webxr scene-viewer quick-look"
+
+scale="1 1 1"
+
+>
+
+</model-viewer>
+
+<div class="hint">
+Drag to rotate • Pinch to zoom
+</div>
+
+<button class="button" onclick="startListening()">🔊 Listen</button>
+
+<button class="button" onclick="stopListening()">⏹ Stop Listening</button>
+
+<button class="button"
+onclick="document.querySelector('model-viewer').activateAR()">
+📱 View in AR
+</button>
+
+<br><br>
+
+<h3>Reflection</h3>
+
+<textarea id="reflection"
+placeholder="Write what you learned about Rutherford's atomic model...">
+</textarea>
+
+<br>
+
+<button class="button" onclick="submitReflection()">
+Submit Reflection
+</button>
+
+<script>
+
+/* SPEECH SYSTEM */
+
+let speech;
+
+function startListening(){
+
+let text = `
+The Rutherford atomic model was proposed by Ernest Rutherford
+after his famous gold foil experiment.
+
+Rutherford discovered that atoms have a small, dense nucleus
+that contains most of the atom's mass and positive charge.
+
+Electrons orbit around the nucleus in mostly empty space.
+
+This model replaced the plum pudding model
+and laid the foundation for Bohr's improvements later.
+
+The 3D model here shows Rutherford's atomic structure.
+`;
+
+speech = new SpeechSynthesisUtterance(text);
+
+speech.rate = 0.9;
+speech.pitch = 1;
+
+speechSynthesis.speak(speech);
+
+}
+
+function stopListening(){
+
+speechSynthesis.cancel();
+
+}
+
+/* REFLECTION */
+
+function submitReflection(){
+
+let text = document.getElementById("reflection").value.trim();
+
+if(text===""){
+alert("Please write a reflection first.");
+return;
+}
+
+alert("Great job! You earned points!");
+
+celebrate();
+
+}
+
+/* EMOJI CELEBRATION */
+
+function celebrate(){
+
+let emojis=["🎉","✨","🎊","👏","⭐","💙","⚛️"];
+
+for(let i=0;i<40;i++){
+
+let e=document.createElement("div");
+
+e.className="emoji";
+
+e.innerText=emojis[Math.floor(Math.random()*emojis.length)];
+
+e.style.left=Math.random()*100+"vw";
+
+document.body.appendChild(e);
+
+setTimeout(()=>{e.remove()},3000);
+
+}
+
+}
+
+</script>
+
+</body>
+</html>
