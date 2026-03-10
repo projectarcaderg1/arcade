@@ -3,204 +3,200 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>ARCADE - Augmented Reality for Creative and Active Digital Education</title>
+<title>ARCADE</title>
 
 <style>
 body{
-  margin:0;
-  font-family:Arial, sans-serif;
-  color:white;
-  text-align:center;
-  background:
-    linear-gradient(rgba(0,0,40,0.6), rgba(0,0,70,0.7)),
-    url("background.png") no-repeat center center fixed;
-  background-size:cover;
+margin:0;
+font-family:Arial;
+color:white;
+text-align:center;
+background:
+linear-gradient(rgba(0,0,40,0.6),rgba(0,0,70,0.7)),
+url("background.png") no-repeat center center fixed;
+background-size:cover;
 }
 
-/* ---------- LIGHTWEIGHT ORBS ---------- */
-body::before {
-  content:"";
-  position:fixed;
-  width:100%;
-  height:100%;
-  background:
-    radial-gradient(circle at 20% 30%, rgba(79,195,247,.15) 0 3px, transparent 4px),
-    radial-gradient(circle at 80% 60%, rgba(200,100,255,.15) 0 3px, transparent 4px);
-  animation:float 18s linear infinite;
+/* floating fog/orbs */
+body::before{
+content:"";
+position:fixed;
+width:100%;
+height:100%;
+background:
+radial-gradient(circle at 20% 30%, rgba(79,195,247,.15) 0 3px, transparent 4px),
+radial-gradient(circle at 80% 60%, rgba(200,100,255,.15) 0 3px, transparent 4px);
+animation:float 18s linear infinite;
 }
 
 @keyframes float{
-  from{transform:translateY(0);}
-  to{transform:translateY(-50px);}
+from{transform:translateY(0);}
+to{transform:translateY(-50px);}
 }
 
 .container{
-  max-width:700px;
-  margin:auto;
-  padding:20px;
+max-width:650px;
+margin:auto;
+padding:20px;
 }
 
 button{
-  width:100%;
-  padding:15px;
-  margin:10px 0;
-  border:none;
-  border-radius:12px;
-  font-size:16px;
-  font-weight:bold;
-  cursor:pointer;
-  color:white;
-  text-shadow:0 0 5px #fff,0 0 10px #00f,0 0 20px #8e2de2;
-  background:#1a1a2e;
-  transition:.3s;
+width:100%;
+padding:15px;
+margin:10px 0;
+border:none;
+border-radius:12px;
+font-size:16px;
+font-weight:bold;
+cursor:pointer;
+color:white;
+text-shadow:0 0 5px #fff,0 0 10px #00f,0 0 20px #8e2de2;
+background:#1a1a2e;
+transition:.3s;
 }
 
 button:hover{
-  background:#27293d;
-  text-shadow:0 0 10px #fff,0 0 20px #00f,0 0 30px #8e2de2;
-  transform:scale(1.03);
+background:#27293d;
+text-shadow:0 0 10px #fff,0 0 20px #00f,0 0 30px #8e2de2;
+transform:scale(1.03);
 }
 
-/* Card for popups */
 .card{
-  background:rgba(0,0,0,0.55);
-  padding:18px;
-  border-radius:15px;
-  margin-top:15px;
-}
-
-/* Emoji */
-.emoji{
-  position:fixed;
-  font-size:22px;
-  animation:fall 1.6s linear forwards;
-}
-@keyframes fall{
-  from{transform:translateY(-40px);}
-  to{transform:translateY(105vh);}
+background:rgba(0,0,0,0.55);
+padding:18px;
+border-radius:15px;
+margin-top:15px;
 }
 </style>
 </head>
 
 <body>
+
 <div class="container">
+
 <h1>🎮 ARCADE</h1>
 <p><b>Augmented Reality for Creative and Active Digital Education</b></p>
 
-<div id="mainMenu">
+<div id="menu">
 <button onclick="showLessons()">📚 Lessons</button>
-<button onclick="startActivity()">📝 Activity</button>
+<button onclick="goActivity()">📝 Activity</button>
 <button onclick="showTrivia()">🧠 Science Trivia</button>
-<button onclick="showAbout()">❓ What is ARCADE?</button>
-<button onclick="showHowTo()">🛠 How to Use</button>
+<button onclick="showAbout()">❓ What is ARCADE</button>
+<button onclick="showHow()">📖 How to Use</button>
 </div>
 
 <div id="content"></div>
 
-<!-- Sound effects -->
-<audio id="correctSound" preload="auto" src="correct.mp3"></audio>
-<audio id="wrongSound" preload="auto" src="wrong.mp3"></audio>
+</div>
 
 <script>
-const triviaList = [
-"Water boils at 100°C at sea level.",
-"The heart pumps around 5 liters of blood per minute.",
-"DNA stands for Deoxyribonucleic Acid.",
-"Lungs have about 300 million alveoli.",
-"The circulatory system transports oxygen and nutrients.",
-"Chromosomes are made of DNA.",
-"The double helix was discovered by Watson and Crick.",
-"Neil Bohr proposed the Bohr model of the atom.",
-"Rutherford discovered the nucleus in 1911.",
-"Volcanoes can be shield, composite, or cinder cones.",
-"Oxygen makes up 21% of Earth's atmosphere.",
-"Pulmonary circulation sends blood from heart to lungs.",
-"The diaphragm is the main breathing muscle.",
-"Red blood cells live for about 120 days.",
-"Atoms are made of protons, neutrons, and electrons."
-];
-let usedTrivia=[];
 
-// ---------- SHOW LESSONS ----------
+/* ---------- LESSONS ---------- */
+
 function showLessons(){
-  const topics = [
-    {name:"Respiratory System", link:"respiratory.html"},
-    {name:"Circulatory System", link:"circulatory.html"},
-    {name:"Pulmonary Circulation", link:"pulmonary.html"},
-    {name:"Coronary Circulation", link:"coronary.html"},
-    {name:"Chromosomes", link:"chromosomes.html"},
-    {name:"Double Helix DNA", link:"dna.html"},
-    {name:"Rutherford's Atom Model", link:"rutherford.html"},
-    {name:"Neil Bohr Atom Model", link:"bohr.html"}
-  ];
+document.getElementById("content").innerHTML=`
+<div class="card">
+<h2>Choose Topic</h2>
 
-  let html = "<div class='card'><h2>Select a Topic</h2>";
-  topics.forEach((t)=>{
-    html+=`<button onclick="location.href='${t.link}'">${t.name}</button>`;
-  });
-  html+="</div>";
+<button onclick="location.href='respiratory.html'">Respiratory System</button>
+<button onclick="location.href='circulatory.html'">Circulatory System</button>
+<button onclick="location.href='pulmonary.html'">Pulmonary Circulation</button>
+<button onclick="location.href='coronary.html'">Coronary Circulation</button>
+<button onclick="location.href='chromosomes.html'">Chromosomes</button>
+<button onclick="location.href='dna.html'">Double Helix DNA</button>
+<button onclick="location.href='rutherford.html'">Rutherford Atom Model</button>
+<button onclick="location.href='bohr.html'">Neil Bohr Atom Model</button>
 
-  document.getElementById("content").innerHTML = html;
+</div>
+`;
 }
 
-// ---------- SHOW TRIVIA ----------
+/* ---------- ACTIVITY ---------- */
+
+function goActivity(){
+location.href="activity.html";
+}
+
+/* ---------- TRIVIA (15) ---------- */
+
+const trivia=[
+"Your lungs contain about 300 million alveoli.",
+"The heart beats around 100,000 times per day.",
+"DNA in one human cell is about 2 meters long.",
+"Chromosomes carry genetic information.",
+"The diaphragm helps lungs expand.",
+"Red blood cells transport oxygen.",
+"Pulmonary circulation moves blood to the lungs.",
+"The human body has 23 pairs of chromosomes.",
+"The double helix shape was discovered in 1953.",
+"Rutherford discovered the atomic nucleus.",
+"Bohr explained electron energy levels.",
+"Atoms are mostly empty space.",
+"The circulatory system includes arteries and veins.",
+"Oxygen is essential for cellular respiration.",
+"White blood cells fight infection."
+];
+
+let used=[];
+
 function showTrivia(){
-  let idx = Math.floor(Math.random()*triviaList.length);
-  while(usedTrivia.includes(idx)){
-    idx = Math.floor(Math.random()*triviaList.length);
-    if(usedTrivia.length===triviaList.length) usedTrivia=[];
-  }
-  usedTrivia.push(idx);
 
-  document.getElementById("content").innerHTML=
-    `<div class='card'><h2>Science Trivia</h2>
-    <p>${triviaList[idx]}</p>
-    <button onclick="showTrivia()">Next Trivia</button></div>`;
+if(used.length===trivia.length) used=[];
+
+let r;
+
+do{
+r=Math.floor(Math.random()*trivia.length);
+}while(used.includes(r));
+
+used.push(r);
+
+document.getElementById("content").innerHTML=`
+<div class="card">
+<h2>Science Trivia</h2>
+<p>${trivia[r]}</p>
+<button onclick="showTrivia()">Next Trivia</button>
+</div>
+`;
 }
 
-// ---------- SHOW ABOUT ----------
+/* ---------- ABOUT ---------- */
+
 function showAbout(){
-  document.getElementById("content").innerHTML=
-  `<div class='card'>
-    <h2>What is ARCADE?</h2>
-    <p>ARCADE is an innovative augmented reality project designed to enhance engagement among Grade 9 students. 
-    Students can view 3D models of scientific concepts, participate in activities, and explore lessons interactively.</p>
-  </div>`;
+document.getElementById("content").innerHTML=`
+<div class="card">
+<h2>What is ARCADE?</h2>
+<p>
+ARCADE stands for Augmented Reality for Creative and Active Digital Education.
+It helps students learn science through interactive lessons, AR models, quizzes,
+and engaging activities that improve understanding of complex topics.
+</p>
+</div>
+`;
 }
 
-// ---------- SHOW HOW TO USE ----------
-function showHowTo(){
-  document.getElementById("content").innerHTML=
-  `<div class='card'>
-    <h2>How to Use ARCADE</h2>
-    <ol style="text-align:left;">
-      <li>Click the "Lessons" button to choose a topic.</li>
-      <li>Explore the lesson page and view the AR 3D model.</li>
-      <li>After reviewing, click "Activity" to answer questions on the topic.</li>
-      <li>Each correct answer gives 10 points.</li>
-      <li>After finishing a topic, check your total points.</li>
-      <li>Enjoy interactive emojis and sounds for engagement.</li>
-      <li>Repeat for other topics to complete all lessons.</li>
-    </ol>
-  </div>`;
+/* ---------- HOW TO USE ---------- */
+
+function showHow(){
+document.getElementById("content").innerHTML=`
+<div class="card">
+<h2>How to Use ARCADE</h2>
+<p style="text-align:left">
+
+1. Click <b>Lessons</b> and choose a science topic.<br><br>
+2. Open the lesson page and observe the 3D AR model.<br><br>
+3. Read and understand the explanation provided.<br><br>
+4. Return to the main menu and open <b>Activity</b>.<br><br>
+5. Select the same topic and answer the quiz.<br><br>
+6. Each correct answer gives <b>10 points</b>.<br><br>
+7. Complete all topics to test your knowledge.<br><br>
+8. You can also open <b>Science Trivia</b> to learn fun facts.
+
+</p>
+</div>
+`;
 }
 
-// ---------- ACTIVITY ----------
-function startActivity(){
-  location.href="activity.html"; // activity page
-}
-
-// ---------- EMOJI ----------
-function emojiBurst(){
-  for(let i=0;i<10;i++){
-    let e=document.createElement("div");
-    e.className="emoji";
-    e.innerText=["🎉","⭐","✨","🥳"][Math.floor(Math.random()*4)];
-    e.style.left=Math.random()*100+"vw";
-    document.body.appendChild(e);
-    setTimeout(()=>e.remove(),1600);
-  }
-}
 </script>
 
 </body>
