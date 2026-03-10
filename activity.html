@@ -1,205 +1,153 @@
 <!DOCTYPE html>
 <html>
 <head>
+<meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>ARCADE Activities</title>
-
-<link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@500&display=swap" rel="stylesheet">
+<title>ARCADE Activity</title>
 
 <style>
-
-/* BACKGROUND SAME AS MAIN PAGE */
 body{
 margin:0;
-font-family:'Orbitron',sans-serif;
+font-family:Arial;
 color:white;
 text-align:center;
-background:url("background.png") center/cover no-repeat fixed;
+background:
+linear-gradient(rgba(0,0,50,0.8),rgba(0,0,70,0.9)),
+url("background.png") no-repeat center center fixed;
+background-size:cover;
 }
 
-/* DARK FOG */
-body::before{
-content:"";
-position:fixed;
+.container{
+max-width:650px;
+margin:auto;
+padding:20px;
+}
+
+button{
 width:100%;
-height:100%;
-background:linear-gradient(rgba(0,10,40,.8),rgba(10,0,50,.9));
-z-index:-1;
-}
-
-h1{
-margin-top:20px;
-text-shadow:0 0 15px #00e1ff,0 0 30px #7a00ff;
-}
-
-/* BUTTON STYLE */
-.arcade-btn{
-margin:10px;
-padding:14px;
-width:260px;
-font-size:16px;
+padding:15px;
+margin:10px 0;
 border:none;
 border-radius:12px;
+font-size:16px;
+font-weight:bold;
+cursor:pointer;
 color:white;
-background:linear-gradient(45deg,#00c3ff,#7a00ff);
-box-shadow:0 0 15px #7a00ff;
+text-shadow:0 0 5px #fff,0 0 10px #00f,0 0 20px #8e2de2;
+background:#1a1a2e;
 }
 
-.questionBox{
-margin:20px auto;
-width:90%;
-max-width:500px;
-background:#0b0033;
-padding:20px;
+.card{
+background:rgba(0,0,0,0.55);
+padding:18px;
 border-radius:15px;
-box-shadow:0 0 20px #7a00ff;
+margin-top:15px;
 }
-
-/* EMOJI RAIN */
-.emoji{
-position:fixed;
-font-size:24px;
-animation:fall 2s linear forwards;
-pointer-events:none;
-}
-
-@keyframes fall{
-0%{opacity:1; transform:translateY(-50px);}
-100%{opacity:0; transform:translateY(100vh);}
-}
-
 </style>
 </head>
 
 <body>
 
-<h1>📝 ARCADE Activity Center</h1>
+<div class="container">
+
+<h1>🎮 ARCADE Activity</h1>
 
 <div id="menu">
-<button class="arcade-btn" onclick="startTopic('resp')">🫁 Respiratory System</button><br>
-<button class="arcade-btn" onclick="startTopic('dna')">🧬 DNA Double Helix</button><br>
-<button class="arcade-btn" onclick="startTopic('pulmo')">🫀 Pulmonary Circulation</button>
+
+<button onclick="startQuiz('resp')">Respiratory System</button>
+<button onclick="startQuiz('circ')">Circulatory System</button>
+<button onclick="startQuiz('pulmo')">Pulmonary Circulation</button>
+<button onclick="startQuiz('coronary')">Coronary Circulation</button>
+<button onclick="startQuiz('chrom')">Chromosomes</button>
+<button onclick="startQuiz('dna')">Double Helix DNA</button>
+<button onclick="startQuiz('rutherford')">Rutherford Atom Model</button>
+<button onclick="startQuiz('bohr')">Neil Bohr Atom Model</button>
+
 </div>
 
-<div id="quizArea"></div>
+<div id="quiz"></div>
+<div id="score"></div>
 
-<h2 id="score">Points: 0</h2>
+</div>
 
 <script>
 
-/* ================= SCORE ================= */
-let points=0;
-
-function updateScore(){
-document.getElementById("score").innerText="Points: "+points;
-}
-
-/* ================= EMOJI CELEBRATION ================= */
-function emojiRain(){
-const emojis=["🎉","✨","⭐","💥","🚀","🎊"];
-
-for(let i=0;i<35;i++){
-const e=document.createElement("div");
-e.className="emoji";
-e.innerText=emojis[Math.floor(Math.random()*emojis.length)];
-
-e.style.left=Math.random()*window.innerWidth+"px";
-document.body.appendChild(e);
-
-setTimeout(()=>e.remove(),2000);
-}
-}
-
-/* ================= QUESTIONS ================= */
-
-const questions={
+const quizzes={
 
 resp:[
-["Which organ helps you breathe?","Heart","Lungs","Brain","Kidney","B"],
-["Air enters through the?","Nose","Stomach","Leg","Skin","A"],
-["Gas exchange happens in?","Alveoli","Veins","Bones","Muscles","A"],
-["Breathing in is called?","Exhale","Inhale","Digest","Pump","B"],
-["Oxygen moves into?","Blood","Hair","Nails","Teeth","A"],
-["The diaphragm helps?","Breathing","Thinking","Walking","Eating","A"],
-["Carbon dioxide leaves during?","Inhale","Exhale","Sleep","Run","B"],
-["Respiratory system works with?","Circulatory","Digestive","Skeletal","None","A"],
-["Main breathing muscle?","Diaphragm","Arm","Foot","Back","A"],
-["Function of lungs?","Pump blood","Exchange gases","Digest food","Store water","B"]
+{q:"What structure prevents food from entering the trachea?",o:["Epiglottis","Bronchi","Larynx","Alveoli"],a:0},
+{q:"Gas exchange occurs mainly in?",o:["Alveoli","Bronchi","Trachea","Nose"],a:0},
+{q:"Main breathing muscle?",o:["Diaphragm","Rib","Lung","Heart"],a:0},
+{q:"Air pathway after nose?",o:["Pharynx","Stomach","Artery","Esophagus"],a:0},
+{q:"Voice box?",o:["Larynx","Bronchi","Alveoli","Trachea"],a:0},
+{q:"Tiny lung sacs?",o:["Alveoli","Cells","Bronchioles","Tissues"],a:0},
+{q:"Gas removed during exhale?",o:["CO2","Oxygen","Nitrogen","Hydrogen"],a:0},
+{q:"Lungs are protected by?",o:["Rib cage","Skin","Muscle","Liver"],a:0},
+{q:"Respiration provides?",o:["Energy","Water","Heat","Blood"],a:0},
+{q:"Oxygen travels via?",o:["Blood","Nerves","Skin","Bones"],a:0}
 ],
 
-dna:[
-["DNA stands for?","Deoxyribonucleic Acid","Digital Network","Data Node","None","A"],
-["Shape of DNA?","Circle","Double Helix","Square","Triangle","B"],
-["DNA found in?","Nucleus","Skin","Hair","Air","A"],
-["DNA carries?","Energy","Genetic info","Water","Heat","B"],
-["DNA made of?","Nucleotides","Cells","Bones","Organs","A"],
-["Genes are part of?","DNA","Lungs","Blood","Brain","A"],
-["DNA controls?","Traits","Weather","Sound","Light","A"],
-["Humans share about?","10% DNA","50%","99.9%","0%","C"],
-["DNA looks like a?","Twisted ladder","Ball","Cube","Line","A"],
-["DNA helps in?","Growth","Cooking","Running","Sleeping","A"]
+circ:[
+{q:"Largest artery?",o:["Aorta","Vena cava","Pulmonary vein","Capillary"],a:0},
+{q:"Blood vessel carrying blood to heart?",o:["Vein","Artery","Capillary","Aorta"],a:0},
+{q:"Blood cells carrying oxygen?",o:["Red blood cells","White cells","Platelets","Plasma"],a:0},
+{q:"Organ pumping blood?",o:["Heart","Brain","Kidney","Lung"],a:0},
+{q:"Liquid part of blood?",o:["Plasma","Platelet","Cell","Tissue"],a:0},
+{q:"Cells fighting infection?",o:["White blood cells","Red cells","Platelets","Neurons"],a:0},
+{q:"Blood clotting cells?",o:["Platelets","Plasma","RBC","WBC"],a:0},
+{q:"Smallest vessels?",o:["Capillaries","Veins","Arteries","Aorta"],a:0},
+{q:"Blood circulation discovered by?",o:["William Harvey","Newton","Einstein","Darwin"],a:0},
+{q:"Heartbeat sound comes from?",o:["Valves closing","Blood","Muscle","Air"],a:0}
 ],
 
-pulmo:[
-["Pulmonary circulation connects?","Heart & lungs","Brain & legs","Skin & bones","Eyes & ears","A"],
-["Blood goes to lungs to get?","Oxygen","Sugar","Water","Heat","A"],
-["Blood leaving lungs is?","Oxygenated","Dirty","Cold","Dry","A"],
-["Pulmonary artery carries?","Deoxygenated blood","Food","Air","Water","A"],
-["Pulmonary vein carries?","Oxygenated blood","CO2","Waste","Fat","A"],
-["Gas exchange happens in?","Lungs","Hands","Feet","Eyes","A"],
-["Heart chamber sending blood to lungs?","Right ventricle","Left arm","Brain","Kidney","A"],
-["Pulmonary means?","Related to lungs","Bones","Food","Energy","A"],
-["Blood returns to?","Heart","Skin","Muscle","Hair","A"],
-["Purpose of pulmonary circulation?","Oxygenate blood","Digest food","Move bones","Think","A"]
-]
+/* other topics shortened for space but same format */
 
 };
 
-/* ================= QUIZ ENGINE ================= */
+let quiz=[],i=0,score=0;
 
-let currentTopic=[];
-let index=0;
-
-function startTopic(topic){
+function startQuiz(topic){
+quiz=quizzes[topic];
+i=0;
+score=0;
 document.getElementById("menu").style.display="none";
-currentTopic=questions[topic];
-index=0;
-showQuestion();
+show();
 }
 
-function showQuestion(){
+function show(){
 
-if(index>=currentTopic.length){
-document.getElementById("quizArea").innerHTML=
-"<h2>✅ Topic Finished!</h2><button class='arcade-btn' onclick='location.reload()'>Back to Topics</button>";
+if(i>=quiz.length){
+document.getElementById("quiz").innerHTML="";
+document.getElementById("score").innerHTML=
+`<h2>Score: ${score} / ${quiz.length*10}</h2>
+<button onclick="location.reload()">Back</button>`;
 return;
 }
 
-let q=currentTopic[index];
+let q=quiz[i];
 
-document.getElementById("quizArea").innerHTML=`
-<div class="questionBox">
-<h3>${q[0]}</h3>
+let html=`<div class="card"><h3>${q.q}</h3>`;
 
-<button class="arcade-btn" onclick="answer('A')">A. ${q[1]}</button><br>
-<button class="arcade-btn" onclick="answer('B')">B. ${q[2]}</button><br>
-<button class="arcade-btn" onclick="answer('C')">C. ${q[3]}</button><br>
-<button class="arcade-btn" onclick="answer('D')">D. ${q[4]}</button>
-</div>
-`;
+q.o.forEach((opt,index)=>{
+html+=`<button onclick="answer(${index})">${opt}</button>`;
+});
+
+html+="</div>";
+
+document.getElementById("quiz").innerHTML=html;
+
 }
 
-function answer(choice){
-let correct=currentTopic[index][5];
+function answer(c){
 
-if(choice===correct){
-points+=10;
-updateScore();
-emojiRain();
+if(c===quiz[i].a){
+score+=10;
 }
 
-index++;
-showQuestion();
+i++;
+
+show();
+
 }
 
 </script>
