@@ -1,200 +1,321 @@
 <!DOCTYPE html>
-<html lang="en">
+<html>
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>ARCADE</title>
+
+<title>ARCADE - Augmented Reality for Creative and Active Digital Education</title>
+
+<link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@600&display=swap" rel="stylesheet">
 
 <style>
+
+/* BACKGROUND */
 body{
 margin:0;
-font-family:Arial;
+font-family:'Orbitron',sans-serif;
 color:white;
 text-align:center;
-background:
-linear-gradient(rgba(0,0,40,0.6),rgba(0,0,70,0.7)),
-url("background.png") no-repeat center center fixed;
-background-size:cover;
+overflow:hidden;
+background:url("background.png") center/cover no-repeat fixed;
 }
 
-/* floating fog/orbs */
+/* dark fog overlay */
 body::before{
 content:"";
 position:fixed;
+top:0;
+left:0;
 width:100%;
 height:100%;
-background:
-radial-gradient(circle at 20% 30%, rgba(79,195,247,.15) 0 3px, transparent 4px),
-radial-gradient(circle at 80% 60%, rgba(200,100,255,.15) 0 3px, transparent 4px);
-animation:float 18s linear infinite;
+background:linear-gradient(
+rgba(0,10,40,.75),
+rgba(10,0,50,.85)
+);
+z-index:-2;
+}
+
+/* glowing orbs */
+.orb{
+position:fixed;
+border-radius:50%;
+filter:blur(40px);
+opacity:.5;
+animation:float 18s infinite alternate linear;
+z-index:-1;
+}
+
+.orb1{
+width:200px;height:200px;
+background:#00e1ff;
+top:10%;left:5%;
+}
+
+.orb2{
+width:250px;height:250px;
+background:#7a00ff;
+bottom:10%;right:10%;
+animation-duration:22s;
 }
 
 @keyframes float{
 from{transform:translateY(0);}
-to{transform:translateY(-50px);}
+to{transform:translateY(-60px);}
 }
 
+/* TITLE */
+h1{
+margin-top:35px;
+font-size:2.2em;
+color:#7df9ff;
+text-shadow:
+0 0 10px #00f7ff,
+0 0 30px #7a00ff;
+}
+
+.subtitle{
+opacity:.85;
+margin-bottom:25px;
+}
+
+/* BUTTONS */
 .container{
-max-width:650px;
-margin:auto;
-padding:20px;
+display:flex;
+flex-direction:column;
+align-items:center;
+gap:18px;
 }
 
-button{
-width:100%;
+.arcade-btn{
+width:270px;
 padding:15px;
-margin:10px 0;
+font-size:17px;
 border:none;
-border-radius:12px;
-font-size:16px;
-font-weight:bold;
+border-radius:14px;
 cursor:pointer;
 color:white;
-text-shadow:0 0 5px #fff,0 0 10px #00f,0 0 20px #8e2de2;
-background:#1a1a2e;
+background:linear-gradient(45deg,#00c3ff,#7a00ff);
+box-shadow:0 0 15px #7a00ff;
+transition:.25s;
+}
+
+.arcade-btn:hover{
+transform:scale(1.07);
+box-shadow:0 0 25px #00f7ff;
+}
+
+/* POPUPS */
+.popup{
+position:fixed;
+top:50%;
+left:50%;
+transform:translate(-50%,-50%) scale(0);
+background:#0b0033;
+border:2px solid #7a00ff;
+border-radius:15px;
+padding:20px;
+width:85%;
+max-width:420px;
 transition:.3s;
 }
 
-button:hover{
-background:#27293d;
-text-shadow:0 0 10px #fff,0 0 20px #00f,0 0 30px #8e2de2;
-transform:scale(1.03);
+.popup.active{
+transform:translate(-50%,-50%) scale(1);
 }
 
-.card{
-background:rgba(0,0,0,0.55);
-padding:18px;
-border-radius:15px;
+.close{
 margin-top:15px;
+padding:8px 14px;
+border:none;
+border-radius:8px;
+background:#7a00ff;
+color:white;
 }
+
+/* EMOJI ANIMATION */
+.emoji{
+position:fixed;
+font-size:24px;
+animation:up 1.5s forwards;
+pointer-events:none;
+}
+
+@keyframes up{
+0%{opacity:1;transform:translateY(0);}
+100%{opacity:0;transform:translateY(-120px);}
+}
+
 </style>
 </head>
 
 <body>
 
+<div class="orb orb1"></div>
+<div class="orb orb2"></div>
+
+<h1>ARCADE</h1>
+<p class="subtitle">
+Augmented Reality for Creative and Active Digital Education
+</p>
+
 <div class="container">
 
-<h1>🎮 ARCADE</h1>
-<p><b>Augmented Reality for Creative and Active Digital Education</b></p>
+<button class="arcade-btn" onclick="openLessons()">📚 Lessons</button>
 
-<div id="menu">
-<button onclick="showLessons()">📚 Lessons</button>
-<button onclick="goActivity()">📝 Activity</button>
-<button onclick="showTrivia()">🧠 Science Trivia</button>
-<button onclick="showAbout()">❓ What is ARCADE</button>
-<button onclick="showHow()">📖 How to Use</button>
+<button class="arcade-btn" onclick="location.href='activity.html'">
+📝 Activity
+</button>
+
+<button class="arcade-btn" onclick="showPopup('about')">
+✨ What is ARCADE?
+</button>
+
+<button class="arcade-btn" onclick="showPopup('how')">
+🧭 How to Use
+</button>
+
+<button class="arcade-btn" onclick="funFact()">
+🎲 Science Trivia
+</button>
+
 </div>
 
-<div id="content"></div>
+<!-- LESSON MENU -->
+<div id="lessonMenu" class="popup">
 
+<h3>Choose Lesson</h3>
+
+<button class="arcade-btn" onclick="goLesson('respiratory.html','🫁')">
+Respiratory System
+</button><br><br>
+
+<button class="arcade-btn" onclick="goLesson('circulatory.html','❤️')">
+Circulatory System
+</button><br><br>
+
+<button class="arcade-btn" onclick="goLesson('pulmonary.html','🫀')">
+Pulmonary Circulation
+</button><br><br>
+
+<button class="arcade-btn" onclick="goLesson('coronay.html','💓')">
+Coronary Circulation
+</button><br><br>
+
+<button class="arcade-btn" onclick="goLesson('chromosome.html','🧬')">
+Chromosomes
+</button><br><br>
+
+<button class="arcade-btn" onclick="goLesson('dna.html','🧬')">
+Double Helix DNA
+</button><br><br>
+
+<button class="arcade-btn" onclick="goLesson('rutherfordatom.html','⚛️')">
+Rutherford's Atom Model
+</button><br><br>
+
+<button class="arcade-btn" onclick="goLesson('bohratom.html','⚛️')">
+Neil Bohr Atom Model
+</button>
+
+<br><br>
+<button class="close" onclick="closePopup()">Close</button>
+
+</div>
+
+<!-- ABOUT -->
+<div id="about" class="popup">
+<h3>What is ARCADE?</h3>
+<p>
+ARCADE is an interactive learning platform that uses augmented reality and
+3D models to help students explore science topics in a fun and engaging way.
+</p>
+<button class="close" onclick="closePopup()">Close</button>
+</div>
+
+<!-- HOW TO USE -->
+<div id="how" class="popup">
+<h3>How to Use</h3>
+<p>
+1. Tap Lessons<br>
+2. Choose a topic<br>
+3. Explore the 3D model or AR view<br>
+4. Listen and learn<br>
+5. Answer questions in the Activity section
+</p>
+<button class="close" onclick="closePopup()">Close</button>
 </div>
 
 <script>
 
-/* ---------- LESSONS ---------- */
-
-function showLessons(){
-document.getElementById("content").innerHTML=`
-<div class="card">
-<h2>Choose Topic</h2>
-
-<button onclick="location.href='respiratory.html'">Respiratory System</button>
-<button onclick="location.href='circulatory.html'">Circulatory System</button>
-<button onclick="location.href='pulmonary.html'">Pulmonary Circulation</button>
-<button onclick="location.href='coronary.html'">Coronary Circulation</button>
-<button onclick="location.href='chromosomes.html'">Chromosomes</button>
-<button onclick="location.href='dna.html'">Double Helix DNA</button>
-<button onclick="location.href='rutherford.html'">Rutherford Atom Model</button>
-<button onclick="location.href='bohr.html'">Neil Bohr Atom Model</button>
-
-</div>
-`;
+/* EMOJI EFFECT */
+function emoji(icon="✨"){
+for(let i=0;i<10;i++){
+const e=document.createElement("div");
+e.className="emoji";
+e.innerText=icon;
+e.style.left=Math.random()*window.innerWidth+"px";
+e.style.top=(window.innerHeight-80)+"px";
+document.body.appendChild(e);
+setTimeout(()=>e.remove(),1500);
+}
 }
 
-/* ---------- ACTIVITY ---------- */
-
-function goActivity(){
-location.href="activity.html";
+/* POPUPS */
+function showPopup(id){
+emoji();
+document.getElementById(id).classList.add("active");
 }
 
-/* ---------- TRIVIA (15) ---------- */
+function closePopup(){
+document.querySelectorAll(".popup")
+.forEach(p=>p.classList.remove("active"));
+}
 
-const trivia=[
-"Your lungs contain about 300 million alveoli.",
-"The heart beats around 100,000 times per day.",
-"DNA in one human cell is about 2 meters long.",
-"Chromosomes carry genetic information.",
-"The diaphragm helps lungs expand.",
-"Red blood cells transport oxygen.",
-"Pulmonary circulation moves blood to the lungs.",
-"The human body has 23 pairs of chromosomes.",
-"The double helix shape was discovered in 1953.",
-"Rutherford discovered the atomic nucleus.",
-"Bohr explained electron energy levels.",
-"Atoms are mostly empty space.",
-"The circulatory system includes arteries and veins.",
-"Oxygen is essential for cellular respiration.",
-"White blood cells fight infection."
+/* LESSON MENU */
+function openLessons(){
+emoji("📚");
+document.getElementById("lessonMenu").classList.add("active");
+}
+
+/* GO TO LESSON */
+function goLesson(page,icon){
+emoji(icon);
+setTimeout(()=>location.href=page,400);
+}
+
+/* 15 SCIENCE TRIVIAS */
+const facts=[
+"🫁 Lungs contain about 300 million alveoli.",
+"🧬 Human DNA is 99.9% identical between people.",
+"⚛️ Atoms are mostly empty space.",
+"🫀 The heart beats about 100,000 times per day.",
+"🧬 Chromosomes carry genetic information.",
+"⚛️ Rutherford discovered the atomic nucleus.",
+"⚛️ Bohr explained electron energy levels.",
+"🫁 Breathing rate increases during exercise.",
+"🧬 DNA can stretch about 2 meters if uncoiled.",
+"🫀 Blood travels the body in about 1 minute.",
+"⚛️ Protons have positive charge.",
+"⚛️ Electrons move around the nucleus.",
+"🫀 The heart has four chambers.",
+"🧬 Genes are sections of DNA.",
+"⚛️ Gold foil experiment proved nucleus exists."
 ];
 
-let used=[];
+let triviaIndex=0;
 
-function showTrivia(){
+function funFact(){
 
-if(used.length===trivia.length) used=[];
+emoji("⭐");
 
-let r;
+alert(facts[triviaIndex]);
 
-do{
-r=Math.floor(Math.random()*trivia.length);
-}while(used.includes(r));
+triviaIndex++;
 
-used.push(r);
-
-document.getElementById("content").innerHTML=`
-<div class="card">
-<h2>Science Trivia</h2>
-<p>${trivia[r]}</p>
-<button onclick="showTrivia()">Next Trivia</button>
-</div>
-`;
+if(triviaIndex>=facts.length){
+triviaIndex=0;
 }
 
-/* ---------- ABOUT ---------- */
-
-function showAbout(){
-document.getElementById("content").innerHTML=`
-<div class="card">
-<h2>What is ARCADE?</h2>
-<p>
-ARCADE stands for Augmented Reality for Creative and Active Digital Education.
-It helps students learn science through interactive lessons, AR models, quizzes,
-and engaging activities that improve understanding of complex topics.
-</p>
-</div>
-`;
-}
-
-/* ---------- HOW TO USE ---------- */
-
-function showHow(){
-document.getElementById("content").innerHTML=`
-<div class="card">
-<h2>How to Use ARCADE</h2>
-<p style="text-align:left">
-
-1. Click <b>Lessons</b> and choose a science topic.<br><br>
-2. Open the lesson page and observe the 3D AR model.<br><br>
-3. Read and understand the explanation provided.<br><br>
-4. Return to the main menu and open <b>Activity</b>.<br><br>
-5. Select the same topic and answer the quiz.<br><br>
-6. Each correct answer gives <b>10 points</b>.<br><br>
-7. Complete all topics to test your knowledge.<br><br>
-8. You can also open <b>Science Trivia</b> to learn fun facts.
-
-</p>
-</div>
-`;
 }
 
 </script>
